@@ -81,9 +81,10 @@ func _physics_process(delta):
 				movePieceInGrid(currentPiece,-1,0)
 		deltaSum = 0
 	if Input.is_action_pressed("ui_down"):
-			#if canPieceMoveLeft(currentPiece):
 			if canPieceMoveDown(currentPiece):
 				movePieceInGrid(currentPiece,0,1)
+				Global.score += 1
+				emit_signal("score_change", Global.score)
 	if Input.is_action_just_pressed("ui_up"):	
 		hardDropPiece()
 	if Input.is_action_just_pressed("rotate_piece_left"):
@@ -137,8 +138,8 @@ func checkAndClearFullLines():
 					grid[x][y] = grid[x][y-1]
 					grid[x][y-1] = 0
 	#Scoring
-	var score
 	if cleared != 0:
+		var score
 		match (cleared):
 			1: score=100*level
 			2: score=300*level
