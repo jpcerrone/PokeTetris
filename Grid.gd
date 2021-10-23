@@ -4,7 +4,6 @@ const gridWidth = 10
 const gridHeight = 22
 const vanishZone = 2
 const spriteSize = 32
-const level = 1
 var pokeball0 = preload("res://spr/poke0.png")
 var pokeball1 = preload("res://spr/poke1.png")
 var pokeball2 = preload("res://spr/poke2.png")
@@ -14,11 +13,13 @@ var pokeball5 = preload("res://spr/poke5.png")
 var pokeball6 = preload("res://spr/poke6.png")
 const Piece = preload("res://Piece.gd")
 signal score_change
+signal level_change
 var timer
 var deltaSum
+var clearedLines
 #Use this as global instead of passing piece to every function
 var currentPiece
-
+var speed
 func delete_children():
 	for n in get_children():
 		remove_child(n)
@@ -50,6 +51,8 @@ func drawGrid():
 func _ready():
 	deltaSum = 0
 	timer = 0
+	speed = 1
+	clearedLines = 0
 	currentPiece = get_parent().get_node("Piece")
 	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
 	spawnPiece(currentPiece)
@@ -91,7 +94,7 @@ func _physics_process(delta):
 		if canRotate(currentPiece) == true:
 			rotatePiece(currentPiece)
 	timer += delta
-	if timer >= 0.2:
+	if timer >= speed:
 		if canPieceMoveDown(currentPiece):
 			movePieceInGrid(currentPiece,0,1)
 		else:
@@ -141,12 +144,18 @@ func checkAndClearFullLines():
 	if cleared != 0:
 		var score
 		match (cleared):
-			1: score=100*level
-			2: score=300*level
-			3: score=500*level
-			4: score=800*level
+			1: score=100*Global.level
+			2: score=300*Global.level
+			3: score=500*Global.level
+			4: score=800*Global.level
 		Global.score += score
 		emit_signal("score_change", Global.score)
+		clearedLines += cleared
+		if (clearedLines >= 10):
+			clearedLines = 0
+			Global.level+=1
+			speed = pow(0.8-(Global.level-1)*0.007,Global.level-1)
+			emit_signal("level_change")
 func _on_PieceMoveTimer_timeout():
 	#TODO: Replace this function with better logic for whole object
 	pass
@@ -165,7 +174,7 @@ func movePieceInGrid(piece: Piece, xMovement, yMovement):
 	
 	
 func spawnPiece(piece:Piece):
-	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2,0)
+	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2,1)
 	addPiece(currentPiece)
 	pass
 

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Grid.gd" type="Script" id=2]
 [ext_resource path="res://Piece.tscn" type="PackedScene" id=3]
 [ext_resource path="res://UI.gd" type="Script" id=4]
+[ext_resource path="res://Level.gd" type="Script" id=5]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -17,7 +18,14 @@ script = ExtResource( 2 )
 
 [node name="Piece" parent="." instance=ExtResource( 3 )]
 
-[node name="UI" type="Panel" parent="."]
+[node name="Control" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Score" type="Panel" parent="Control"]
 margin_right = 133.0
 margin_bottom = 40.0
 script = ExtResource( 4 )
@@ -25,7 +33,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScoreText" type="Label" parent="UI"]
+[node name="ScoreText" type="Label" parent="Control/Score"]
 margin_left = 1.0
 margin_right = 132.0
 margin_bottom = 40.0
@@ -35,7 +43,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScoreNumber" type="Label" parent="UI"]
+[node name="ScoreNumber" type="Label" parent="Control/Score"]
 margin_left = 1.0
 margin_top = 1.0
 margin_right = 132.0
@@ -47,5 +55,35 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Level" type="Panel" parent="Control"]
+margin_left = 523.0
+margin_right = 600.0
+margin_bottom = 40.0
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LevelText" type="Label" parent="Control/Level"]
+margin_left = 2.32257
+margin_right = 69.3226
+margin_bottom = 40.0
+text = "Level:"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LevelNumber" type="Label" parent="Control/Level"]
+margin_right = 58.0
+margin_bottom = 40.0
+text = "1"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="timeout" from="PieceMoveTimer" to="Grid" method="_on_PieceMoveTimer_timeout"]
-[connection signal="score_change" from="Grid" to="UI" method="_on_Grid_score_change"]
+[connection signal="level_change" from="Grid" to="Control/Level" method="_on_Grid_level_change"]
+[connection signal="score_change" from="Grid" to="Control/Score" method="_on_Grid_score_change"]
