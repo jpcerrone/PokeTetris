@@ -4,6 +4,7 @@ const gridWidth = 10
 const gridHeight = 22
 const vanishZone = 2
 const spriteSize = 32
+const dasDelay = 16
 var pokeball0 = preload("res://spr/poke0.png")
 var pokeball1 = preload("res://spr/poke1.png")
 var pokeball2 = preload("res://spr/poke2.png")
@@ -17,6 +18,7 @@ signal level_change
 var timer
 var deltaSum
 var clearedLines
+var dasCounter
 #Use this as global instead of passing piece to every function
 var currentPiece
 var speed
@@ -53,6 +55,7 @@ func _ready():
 	timer = 0
 	speed = 1
 	clearedLines = 0
+	dasCounter = 0
 	currentPiece = get_parent().get_node("Piece")
 	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
 	spawnPiece(currentPiece)
@@ -70,12 +73,14 @@ func _physics_process(delta):
 		if canPieceMoveRight(currentPiece):
 				movePieceInGrid(currentPiece,1,0)
 		deltaSum = 0
+		dasCounter = 0
 	if Input.is_action_just_pressed("ui_left"):
 		if canPieceMoveLeft(currentPiece):
 				movePieceInGrid(currentPiece,-1,0)
 		deltaSum = 0
+		dasCounter = 0
 	deltaSum += delta
-	if (deltaSum > 4*delta):
+	if (deltaSum > 2*delta) && (dasCounter>dasDelay):
 		if Input.is_action_pressed("ui_right"):
 				if canPieceMoveRight(currentPiece):
 					movePieceInGrid(currentPiece,1,0)
@@ -83,6 +88,7 @@ func _physics_process(delta):
 			if canPieceMoveLeft(currentPiece):
 				movePieceInGrid(currentPiece,-1,0)
 		deltaSum = 0
+	dasCounter+=1
 	if Input.is_action_pressed("ui_down"):
 			if canPieceMoveDown(currentPiece):
 				movePieceInGrid(currentPiece,0,1)
