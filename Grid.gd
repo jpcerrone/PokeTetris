@@ -4,6 +4,7 @@ const gridWidth = 10
 const gridHeight = 22
 const vanishZone = 2
 const spriteSize = 32
+const level = 1
 var pokeball0 = preload("res://spr/poke0.png")
 var pokeball1 = preload("res://spr/poke1.png")
 var pokeball2 = preload("res://spr/poke2.png")
@@ -135,6 +136,16 @@ func checkAndClearFullLines():
 				if (grid[x][y] == 0) && (grid[x][y-1] != 0):
 					grid[x][y] = grid[x][y-1]
 					grid[x][y-1] = 0
+	#Scoring
+	var score
+	if cleared != 0:
+		match (cleared):
+			1: score=100*level
+			2: score=300*level
+			3: score=500*level
+			4: score=800*level
+		Global.score += score
+		emit_signal("score_change", Global.score)
 func _on_PieceMoveTimer_timeout():
 	#TODO: Replace this function with better logic for whole object
 	pass
