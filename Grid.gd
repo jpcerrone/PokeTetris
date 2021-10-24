@@ -4,7 +4,7 @@ const gridWidth = 10
 const gridHeight = 22
 const vanishZone = 2
 const spriteSize = 32
-const dasDelay = 16
+const dasDelay = 8
 var pokeball0 = preload("res://spr/poke0.png")
 var pokeball1 = preload("res://spr/poke1.png")
 var pokeball2 = preload("res://spr/poke2.png")
@@ -12,6 +12,7 @@ var pokeball3 = preload("res://spr/poke3.png")
 var pokeball4 = preload("res://spr/poke4.png")
 var pokeball5 = preload("res://spr/poke5.png")
 var pokeball6 = preload("res://spr/poke6.png")
+var pokeballBorder = preload("res://spr/pokeDrop.png")
 const Piece = preload("res://Piece.gd")
 signal score_change
 signal level_change
@@ -69,24 +70,29 @@ func addPiece(piece: Piece):
 				grid[piece.positionInGrid.x+x][piece.positionInGrid.y+y] = piece.shape[x][y]
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
+	var sthHappened = false
 	if Input.is_action_just_pressed("ui_right"):
 		if canPieceMoveRight(currentPiece):
-				movePieceInGrid(currentPiece,1,0)
+			movePieceInGrid(currentPiece,1,0)
+			sthHappened = true
 		deltaSum = 0
 		dasCounter = 0
 	if Input.is_action_just_pressed("ui_left"):
 		if canPieceMoveLeft(currentPiece):
-				movePieceInGrid(currentPiece,-1,0)
+			movePieceInGrid(currentPiece,-1,0)
+			sthHappened = true
 		deltaSum = 0
 		dasCounter = 0
 	deltaSum += delta
 	if (deltaSum > 2*delta) && (dasCounter>dasDelay):
 		if Input.is_action_pressed("ui_right"):
-				if canPieceMoveRight(currentPiece):
-					movePieceInGrid(currentPiece,1,0)
+			if canPieceMoveRight(currentPiece):
+				movePieceInGrid(currentPiece,1,0)
+				sthHappened = true
 		if Input.is_action_pressed("ui_left"):
 			if canPieceMoveLeft(currentPiece):
 				movePieceInGrid(currentPiece,-1,0)
+				sthHappened = true
 		deltaSum = 0
 	dasCounter+=1
 	if Input.is_action_pressed("ui_down"):
@@ -94,11 +100,14 @@ func _physics_process(delta):
 				movePieceInGrid(currentPiece,0,1)
 				Global.score += 1
 				emit_signal("score_change", Global.score)
+				sthHappened = true
 	if Input.is_action_just_pressed("ui_up"):	
 		hardDropPiece()
+		sthHappened = true
 	if Input.is_action_just_pressed("rotate_piece_left"):
 		if canRotate(currentPiece) == true:
 			rotatePiece(currentPiece)
+			sthHappened = true
 	timer += delta
 	if timer >= speed:
 		if canPieceMoveDown(currentPiece):
@@ -109,9 +118,41 @@ func _physics_process(delta):
 			if (checkGameOver()):
 				get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
 			spawnPiece(currentPiece)
+		sthHappened = true
 		timer=0
-	drawGrid()
+	if (sthHappened):
+		drawGrid()
+		drawDroppingPoint(currentPiece)
 	
+	
+func drawDroppingPoint(piece: Piece):
+
+	if piece.positionInGrid.y < gridHeight-piece.shape[0].size():
+		deletePieceFromGrid(piece)
+		var droppingY = piece.positionInGrid.y
+		var foundDroppingLine = false
+		while (!foundDroppingLine) && (droppingY<gridHeight-piece.shape[0].size()):
+			for i in range(0,piece.shape.size()):
+				for j in range(piece.shape[0].size()-1,-1,-1):
+					if piece.shape[i][j] != 0:
+						if (grid[piece.positionInGrid.x + i][droppingY + j + 1] != 0):
+							foundDroppingLine = true
+							droppingY-=1
+							break
+			droppingY+=1
+		addPiece(piece)
+		#draw shape with outline
+		for x in piece.shape.size():
+			for y in piece.shape[0].size():
+				if (piece.shape[x][y] != 0) && (grid[piece.positionInGrid.x + x][droppingY + y] == 0):
+					var circle = Sprite.new()
+					var gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
+					var gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
+					circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
+					circle.texture = pokeballBorder
+					circle.scale = Vector2(2,2)
+					circle.centered = false
+					add_child(circle)
 	
 func hardDropPiece():
 	while (canPieceMoveDown(currentPiece)):
