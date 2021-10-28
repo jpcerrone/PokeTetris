@@ -1,4 +1,4 @@
-extends Panel
+extends Control
 
 
 # Declare member variables here. Examples:
@@ -10,12 +10,17 @@ extends Panel
 func _ready():
 	pass # Replace with function body.
 
-func update_score(score):
-	$ScoreNumber.text = str(score)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
 
 
+func _on_Grid_lines_change(score):
+	$Lines/LinesNumber.text = str(score)
 
+func _on_Grid_level_change(level):
+	$Level/LevelNumber.text = str(level)
+	
+func _on_Grid_score_change(score):
+	$Score/ScoreNumber.text = str(score)

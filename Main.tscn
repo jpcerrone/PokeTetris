@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Grid.gd" type="Script" id=2]
 [ext_resource path="res://Piece.tscn" type="PackedScene" id=3]
-[ext_resource path="res://UI.gd" type="Script" id=4]
-[ext_resource path="res://Level.gd" type="Script" id=5]
+[ext_resource path="res://Control.gd" type="Script" id=6]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -21,6 +20,7 @@ script = ExtResource( 2 )
 [node name="Control" type="Control" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0
+script = ExtResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -28,7 +28,6 @@ __meta__ = {
 [node name="Score" type="Panel" parent="Control"]
 margin_right = 133.0
 margin_bottom = 40.0
-script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -59,7 +58,6 @@ __meta__ = {
 margin_left = 523.0
 margin_right = 600.0
 margin_bottom = 40.0
-script = ExtResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -84,6 +82,37 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Lines" type="Panel" parent="Control"]
+margin_left = 514.924
+margin_top = 760.0
+margin_right = 600.924
+margin_bottom = 800.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinesText" type="Label" parent="Control/Lines"]
+margin_left = 2.92395
+margin_top = 14.6197
+margin_right = 42.924
+margin_bottom = 28.6197
+text = "Lines:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinesNumber" type="Label" parent="Control/Lines"]
+margin_left = 42.8844
+margin_top = 13.6451
+margin_right = 82.8844
+margin_bottom = 27.6451
+text = "0"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="timeout" from="PieceMoveTimer" to="Grid" method="_on_PieceMoveTimer_timeout"]
-[connection signal="level_change" from="Grid" to="Control/Level" method="_on_Grid_level_change"]
-[connection signal="score_change" from="Grid" to="Control/Score" method="_on_Grid_score_change"]
+[connection signal="level_change" from="Grid" to="Control" method="_on_Grid_level_change"]
+[connection signal="lines_change" from="Grid" to="Control" method="_on_Grid_lines_change"]
+[connection signal="score_change" from="Grid" to="Control" method="_on_Grid_score_change"]

@@ -16,10 +16,14 @@ var pokeballBorder = preload("res://spr/pokeDrop.png")
 const Piece = preload("res://Piece.gd")
 signal score_change
 signal level_change
+signal lines_change
 var timer
 var deltaSum
 var clearedLines
 var dasCounter
+var lines = 0
+var level = 1
+var score = 0
 #Use this as global instead of passing piece to every function
 var currentPiece
 var speed
@@ -98,8 +102,8 @@ func _physics_process(delta):
 	if Input.is_action_pressed("ui_down"):
 			if canPieceMoveDown(currentPiece):
 				movePieceInGrid(currentPiece,0,1)
-				Global.score += 1
-				emit_signal("score_change", Global.score)
+				score += 1
+				emit_signal("score_change", score)
 				sthHappened = true
 	if Input.is_action_just_pressed("ui_up"):	
 		hardDropPiece()
@@ -156,8 +160,8 @@ func drawDroppingPoint(piece: Piece):
 	
 func hardDropPiece():
 	while (canPieceMoveDown(currentPiece)):
-		Global.score += 2
-		emit_signal("score_change", Global.score)
+		score += 2
+		emit_signal("score_change", score)
 		movePieceInGrid(currentPiece,0,1)
 func checkGameOver():
 	for i in range (gridWidth):
@@ -190,18 +194,20 @@ func checkAndClearFullLines():
 	if cleared != 0:
 		var score
 		match (cleared):
-			1: score=100*Global.level
-			2: score=300*Global.level
-			3: score=500*Global.level
-			4: score=800*Global.level
-		Global.score += score
-		emit_signal("score_change", Global.score)
+			1: score=100*level
+			2: score=300*level
+			3: score=500*level
+			4: score=800*level
+		score += score
+		lines += cleared
+		emit_signal("score_change", score)
+		emit_signal("lines_change", lines)
 		clearedLines += cleared
 		if (clearedLines >= 10):
 			clearedLines = 0
-			Global.level+=1
-			speed = pow(0.8-(Global.level-1)*0.007,Global.level-1)
-			emit_signal("level_change")
+			level+=1
+			speed = pow(0.8-(level-1)*0.007,level-1)
+			emit_signal("level_change", level)
 func _on_PieceMoveTimer_timeout():
 	#TODO: Replace this function with better logic for whole object
 	pass
