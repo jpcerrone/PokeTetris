@@ -171,22 +171,21 @@ func checkAndClearFullLines():
 	var cleared = 0
 	for y in range(gridHeight):
 		var fullLine = true
-		for x in range(gridWidth-1):
+		for x in range(gridWidth):
 			if grid[x][y] == 0:
 				fullLine = false
 				break;
-		if fullLine && grid[gridWidth-1][y] != 0:
+		if fullLine:
 			cleared+=1
 			#Clear line
 			for x in range(gridWidth):
 				grid[x][y] = 0
-	#Move everything down
-	for i in range(cleared):
-		for y in range(gridHeight-1,0,-1):
-			for x in range(gridWidth):
-				if (grid[x][y] == 0) && (grid[x][y-1] != 0):
-					grid[x][y] = grid[x][y-1]
-					grid[x][y-1] = 0
+			#Move everything down
+			for j in range(y,0,-1):
+				for i in range(gridWidth):
+					if (grid[i][j] == 0) && (grid[i][j-1] != 0):
+						grid[i][j] = grid[i][j-1]
+						grid[i][j-1] = 0
 	#Scoring
 	if cleared != 0:
 		var score
@@ -221,7 +220,7 @@ func movePieceInGrid(piece: Piece, xMovement, yMovement):
 	
 	
 func spawnPiece(piece:Piece):
-	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2,1)
+	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2,0)
 	addPiece(currentPiece)
 	pass
 
