@@ -2,7 +2,7 @@ extends Node2D
 var grid = []
 const gridWidth = 10
 const gridHeight = 22
-const vanishZone = 2
+const vanishZone = 1
 const spriteSize = 32
 const dasDelay = 8
 var pokeball0 = preload("res://spr/poke0.png")
@@ -107,7 +107,9 @@ func _physics_process(delta):
 				sthHappened = true
 	if Input.is_action_just_pressed("ui_up"):	
 		hardDropPiece()
+		afterDrop()
 		sthHappened = true
+		timer=0
 	if Input.is_action_just_pressed("rotate_piece_left"):
 		if canRotate(currentPiece) == true:
 			rotatePiece(currentPiece)
@@ -117,11 +119,7 @@ func _physics_process(delta):
 		if canPieceMoveDown(currentPiece):
 			movePieceInGrid(currentPiece,0,1)
 		else:
-			currentPiece = Piece.new()
-			checkAndClearFullLines()
-			if (checkGameOver()):
-				get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
-			spawnPiece(currentPiece)
+			afterDrop()
 		sthHappened = true
 		timer=0
 	if (sthHappened):
@@ -129,6 +127,13 @@ func _physics_process(delta):
 		drawDroppingPoint(currentPiece)
 	
 	
+func afterDrop():
+	currentPiece = Piece.new()
+	checkAndClearFullLines()
+	if (checkGameOver()):
+		get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
+	spawnPiece(currentPiece)
+
 func drawDroppingPoint(piece: Piece):
 
 	if piece.positionInGrid.y < gridHeight-piece.shape[0].size():
