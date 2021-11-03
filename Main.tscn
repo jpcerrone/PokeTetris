@@ -112,6 +112,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="ReferenceRect" type="ReferenceRect" parent="."]
+margin_left = 139.0
+margin_top = 92.0
+margin_right = 460.0
+margin_bottom = 754.0
+border_color = Color( 0.301961, 0.376471, 1, 1 )
+border_width = 5.0
+editor_only = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="timeout" from="PieceMoveTimer" to="Grid" method="_on_PieceMoveTimer_timeout"]
 [connection signal="level_change" from="Grid" to="Control" method="_on_Grid_level_change"]
 [connection signal="lines_change" from="Grid" to="Control" method="_on_Grid_lines_change"]

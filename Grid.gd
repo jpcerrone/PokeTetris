@@ -2,7 +2,7 @@ extends Node2D
 var grid = []
 const gridWidth = 10
 const gridHeight = 22
-const vanishZone = 1
+const vanishZone = 2
 const spriteSize = 32
 const dasDelay = 8
 var pokeball0 = preload("res://spr/poke0.png")
@@ -35,12 +35,17 @@ func delete_children():
 func drawGrid():
 	#TODO: figure out better way to do this than delete children
 	delete_children()
+	var gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
+	var gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
 	for x in range(gridWidth):
-		for y in range(vanishZone,gridHeight):
+		for y in range(vanishZone-1,gridHeight):
 			var circle = Sprite.new()
-			var gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
-			var gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
-			circle.position = Vector2(x*spriteSize + gridOffsetX,y*spriteSize + gridOffsetY)
+			if (y == 1):
+				circle.region_enabled = true
+				circle.region_rect = Rect2(0,6,16,10)
+				circle.position = Vector2(x*spriteSize + gridOffsetX,y*spriteSize + gridOffsetY + 16)
+			else:
+				circle.position = Vector2(x*spriteSize + gridOffsetX,y*spriteSize + gridOffsetY)
 			match (grid[x][y]):
 				(0): circle.texture = pokeball0
 				(1): circle.texture = pokeball1
@@ -65,6 +70,7 @@ func _ready():
 	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
 	spawnPiece(currentPiece)
 	drawGrid()
+	drawDroppingPoint(currentPiece)
 	pass # Replace with function body.
 
 func addPiece(piece: Piece):
@@ -135,7 +141,6 @@ func afterDrop():
 	spawnPiece(currentPiece)
 
 func drawDroppingPoint(piece: Piece):
-
 	if piece.positionInGrid.y < gridHeight-piece.shape[0].size():
 		deletePieceFromGrid(piece)
 		var droppingY = piece.positionInGrid.y
@@ -151,17 +156,18 @@ func drawDroppingPoint(piece: Piece):
 			droppingY+=1
 		addPiece(piece)
 		#draw shape with outline
-		for x in piece.shape.size():
-			for y in piece.shape[0].size():
-				if (piece.shape[x][y] != 0) && (grid[piece.positionInGrid.x + x][droppingY + y] == 0):
-					var circle = Sprite.new()
-					var gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
-					var gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
-					circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
-					circle.texture = pokeballBorder
-					circle.scale = Vector2(2,2)
-					circle.centered = false
-					add_child(circle)
+		if droppingY >= vanishZone:
+			for x in piece.shape.size():
+				for y in piece.shape[0].size():
+					if (piece.shape[x][y] != 0) && (grid[piece.positionInGrid.x + x][droppingY + y] == 0):
+						var circle = Sprite.new()
+						var gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
+						var gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
+						circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
+						circle.texture = pokeballBorder
+						circle.scale = Vector2(2,2)
+						circle.centered = false
+						add_child(circle)
 	
 func hardDropPiece():
 	while (canPieceMoveDown(currentPiece)):
@@ -170,7 +176,7 @@ func hardDropPiece():
 		movePieceInGrid(currentPiece,0,1)
 func checkGameOver():
 	for i in range (gridWidth):
-		if grid[i][0] != 0:
+		if grid[i][vanishZone-1] != 0:
 			return true
 	return	false
 
@@ -231,7 +237,14 @@ func movePieceInGrid(piece: Piece, xMovement, yMovement):
 	
 	
 func spawnPiece(piece:Piece):
+	var spawnIn = 1
 	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2,0)
+	for i in range(piece.shape.size()):
+		if piece.shape[i][piece.shape[0].size()-1] != 0 && grid[piece.positionInGrid.x + i][2] != 0:
+			spawnIn = 0
+			break;
+	
+	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2,spawnIn)
 	addPiece(currentPiece)
 	pass
 
