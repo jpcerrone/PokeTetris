@@ -14,6 +14,9 @@ var pokeball5 = preload("res://spr/poke5.png")
 var pokeball6 = preload("res://spr/poke6.png")
 var pokeballBorder = preload("res://spr/pokeDrop.png")
 const Piece = preload("res://Piece.gd")
+var DropParticle = preload("res://DropParticle.tscn")
+var gridOffsetX
+var gridOffsetY
 signal score_change
 signal level_change
 signal lines_change
@@ -34,12 +37,11 @@ func delete_children():
 
 func drawGrid():
 	#TODO: figure out better way to do this than delete children
-	delete_children()
-	var gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
-	var gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
+	#delete_children()
 	for x in range(gridWidth):
 		for y in range(vanishZone-1,gridHeight):
 			var circle = Sprite.new()
+			circle.z_index = -1
 			if (y == 1):
 				circle.region_enabled = true
 				circle.region_rect = Rect2(0,6,16,10)
@@ -66,6 +68,8 @@ func _ready():
 	speed = 1
 	clearedLines = 0
 	dasCounter = 0
+	gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
+	gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
 	currentPiece = get_parent().get_node("Piece")
 	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
 	spawnPiece(currentPiece)
@@ -161,6 +165,7 @@ func drawDroppingPoint(piece: Piece):
 				for y in piece.shape[0].size():
 					if (piece.shape[x][y] != 0) && (grid[piece.positionInGrid.x + x][droppingY + y] == 0):
 						var circle = Sprite.new()
+						circle.z_index = -1
 						var gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
 						var gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
 						circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
@@ -174,6 +179,23 @@ func hardDropPiece():
 		score += 2
 		emit_signal("score_change", score)
 		movePieceInGrid(currentPiece,0,1)
+	var particle = DropParticle.instance()
+	#particle.position.x = ((currentPiece.positionInGrid.x* spriteSize +currentPiece.shape.size()*spriteSize)/2) + gridOffsetX
+	particle.position.x = gridOffsetX + ((currentPiece.positionInGrid.x + currentPiece.shape.size()/float(2)))* spriteSize
+	var pixelPosy = (currentPiece.positionInGrid.y+1)* spriteSize
+	particle.position.y = (pixelPosy)/2 + gridOffsetY
+	particle.emitting = true
+	particle.setBoxRanges(Vector2(currentPiece.shape.size()/float(2)* spriteSize, pixelPosy/2 -spriteSize))
+	particle.amount = pixelPosy/20
+	match currentPiece.getColorIndex():
+		1: particle.setColor(Color.red)
+		2: particle.setColor(Color.blue)
+		3: particle.setColor(Color.yellow)
+		4: particle.setColor(Color.purple)
+		5: particle.setColor(Color.green)
+		6: particle.setColor(Color.orange)
+	add_child(particle)
+	pass
 func checkGameOver():
 	for i in range (gridWidth):
 		if grid[i][vanishZone-1] != 0:

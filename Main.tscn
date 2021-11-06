@@ -13,6 +13,7 @@ wait_time = 0.181
 autostart = true
 
 [node name="Grid" type="Node2D" parent="."]
+z_index = 1
 script = ExtResource( 2 )
 
 [node name="Piece" parent="." instance=ExtResource( 3 )]

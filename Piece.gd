@@ -15,6 +15,12 @@ func _init():
 func _ready():
 	pass # Replace with function body.
 
+func getColorIndex():
+	for i in range(shape.size()):
+		for j in range(shape[0].size()):
+			if shape[i][j] != 0:
+				return shape[i][j]
+	return 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

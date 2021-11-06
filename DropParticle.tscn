@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://DropParticle.gd" type="Script" id=1]
+[ext_resource path="res://DropParticle.tres" type="Material" id=2]
+
+[node name="Particles2D" type="Particles2D"]
+position = Vector2( 101.38, 101.38 )
+emitting = false
+amount = 70
+lifetime = 1.5
+one_shot = true
+preprocess = 0.2
+explosiveness = 0.52
+randomness = 1.0
+local_coords = false
+draw_order = 1
+process_material = ExtResource( 2 )
+script = ExtResource( 1 )
