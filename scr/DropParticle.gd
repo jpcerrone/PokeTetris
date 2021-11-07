@@ -1,5 +1,5 @@
 extends Particles2D
-var mat = preload("res://DropParticle.tres")
+var mat = preload("res://extras/DropParticle.tres")
 
 # Declare member variables here. Examples:
 # var a = 2

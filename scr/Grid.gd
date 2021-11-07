@@ -13,8 +13,8 @@ var pokeball4 = preload("res://spr/poke4.png")
 var pokeball5 = preload("res://spr/poke5.png")
 var pokeball6 = preload("res://spr/poke6.png")
 var pokeballBorder = preload("res://spr/pokeDrop.png")
-const Piece = preload("res://Piece.gd")
-var DropParticle = preload("res://DropParticle.tscn")
+const Piece = preload("res://scr/Piece.gd")
+var DropParticle = preload("res://scn/DropParticle.tscn")
 var gridOffsetX
 var gridOffsetY
 signal score_change

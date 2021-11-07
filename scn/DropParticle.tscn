@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://DropParticle.gd" type="Script" id=1]
-[ext_resource path="res://DropParticle.tres" type="Material" id=2]
+[ext_resource path="res://extras/DropParticle.tres" type="Material" id=1]
+[ext_resource path="res://scr/DropParticle.gd" type="Script" id=2]
 
 [node name="Particles2D" type="Particles2D"]
 position = Vector2( 101.38, 101.38 )
@@ -14,5 +14,5 @@ explosiveness = 0.52
 randomness = 1.0
 local_coords = false
 draw_order = 1
-process_material = ExtResource( 2 )
-script = ExtResource( 1 )
+process_material = ExtResource( 1 )
+script = ExtResource( 2 )
