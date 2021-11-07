@@ -70,8 +70,8 @@ func _ready():
 	speed = 1
 	clearedLines = 0
 	dasCounter = 0
-	gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
-	gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
+	gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2.0
+	gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2.0
 	currentPiece = get_parent().get_node("Piece")
 	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
 	spawnPiece(currentPiece)
@@ -168,8 +168,6 @@ func drawDroppingPoint(piece: Piece):
 					if (piece.shape[x][y] != 0) && (grid[piece.positionInGrid.x + x][droppingY + y] == 0):
 						var circle = Sprite.new()
 						circle.z_index = -1
-						var gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2
-						var gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2
 						circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
 						circle.texture = pokeballBorder
 						circle.scale = Vector2(2,2)
@@ -226,21 +224,21 @@ func checkAndClearFullLines():
 						grid[i][j-1] = 0
 			#Draw clear particle
 			var particle = ClearParticle.instance()
-			particle.position.x = gridOffsetX + spriteSize*gridWidth/2
+			particle.position.x = gridOffsetX + spriteSize*gridWidth/2.0
 			var pixelPosy = (y)* spriteSize
 			particle.position.y = (pixelPosy) + gridOffsetY
-			particle.setBoxRange(spriteSize*gridWidth/2)
+			particle.setBoxRange(spriteSize*gridWidth/2.0)
 			add_child(particle)
 			particle.emit()
 	#Scoring
 	if cleared != 0:
-		var score
+		var newScore
 		match (cleared):
-			1: score=100*level
-			2: score=300*level
-			3: score=500*level
-			4: score=800*level
-		score += score
+			1: newScore=100*level
+			2: newScore=300*level
+			3: newScore=500*level
+			4: newScore=800*level
+		score += newScore
 		lines += cleared
 		emit_signal("score_change", score)
 		emit_signal("lines_change", lines)
@@ -250,11 +248,6 @@ func checkAndClearFullLines():
 			level+=1
 			speed = pow(0.8-(level-1)*0.007,level-1)
 			emit_signal("level_change", level)
-func _on_PieceMoveTimer_timeout():
-	#TODO: Replace this function with better logic for whole object
-	pass
-	#drawGrid()
-
 
 func movePieceInGrid(piece: Piece, xMovement, yMovement):
 	deletePieceFromGrid(piece)
