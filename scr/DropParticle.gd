@@ -20,6 +20,12 @@ func setColor(color: Color):
 
 func setAmountParticles(particles):
 	amount = particles
+	
+func emit():
+	emitting = true
+	yield(get_tree().create_timer(5.0), "timeout")
+	queue_free()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+

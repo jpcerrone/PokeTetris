@@ -35,7 +35,3 @@ rotate_piece_left={
 [physics]
 
 common/enable_pause_aware_picking=true
-
-[rendering]
-
-environment/default_environment="res://extras/default_env.tres"

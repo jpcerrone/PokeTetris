@@ -15,6 +15,7 @@ var pokeball6 = preload("res://spr/poke6.png")
 var pokeballBorder = preload("res://spr/pokeDrop.png")
 const Piece = preload("res://scr/Piece.gd")
 var DropParticle = preload("res://scn/DropParticle.tscn")
+var ClearParticle = preload("res://scn/ClearParticle.tscn")
 var gridOffsetX
 var gridOffsetY
 signal score_change
@@ -32,12 +33,13 @@ var currentPiece
 var speed
 func delete_children():
 	for n in get_children():
-		remove_child(n)
-		n.queue_free()
+		if n.is_class("Sprite"):
+			remove_child(n)
+			n.queue_free()
 
 func drawGrid():
 	#TODO: figure out better way to do this than delete children
-	#delete_children()
+	delete_children()
 	for x in range(gridWidth):
 		for y in range(vanishZone-1,gridHeight):
 			var circle = Sprite.new()
@@ -184,7 +186,6 @@ func hardDropPiece():
 	particle.position.x = gridOffsetX + ((currentPiece.positionInGrid.x + currentPiece.shape.size()/float(2)))* spriteSize
 	var pixelPosy = (currentPiece.positionInGrid.y+1)* spriteSize
 	particle.position.y = (pixelPosy)/2 + gridOffsetY
-	particle.emitting = true
 	particle.setBoxRanges(Vector2(currentPiece.shape.size()/float(2)* spriteSize, pixelPosy/2 -spriteSize))
 	particle.amount = pixelPosy/20
 	match currentPiece.getColorIndex():
@@ -195,7 +196,7 @@ func hardDropPiece():
 		5: particle.setColor(Color.green)
 		6: particle.setColor(Color.orange)
 	add_child(particle)
-	pass
+	particle.emit()
 func checkGameOver():
 	for i in range (gridWidth):
 		if grid[i][vanishZone-1] != 0:
@@ -223,6 +224,14 @@ func checkAndClearFullLines():
 					if (grid[i][j] == 0) && (grid[i][j-1] != 0):
 						grid[i][j] = grid[i][j-1]
 						grid[i][j-1] = 0
+			#Draw clear particle
+			var particle = ClearParticle.instance()
+			particle.position.x = gridOffsetX + spriteSize*gridWidth/2
+			var pixelPosy = (y)* spriteSize
+			particle.position.y = (pixelPosy) + gridOffsetY
+			particle.setBoxRange(spriteSize*gridWidth/2)
+			add_child(particle)
+			particle.emit()
 	#Scoring
 	if cleared != 0:
 		var score
