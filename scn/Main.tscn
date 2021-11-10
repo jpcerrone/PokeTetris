@@ -111,9 +111,9 @@ __meta__ = {
 
 [node name="ReferenceRect" type="ReferenceRect" parent="."]
 margin_left = 139.0
-margin_top = 92.0
+margin_top = 108.0
 margin_right = 460.0
-margin_bottom = 754.0
+margin_bottom = 770.0
 border_color = Color( 0.301961, 0.376471, 1, 1 )
 border_width = 5.0
 editor_only = false

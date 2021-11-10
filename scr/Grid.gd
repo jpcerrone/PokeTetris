@@ -1,8 +1,8 @@
 extends Node2D
 var grid = []
 const gridWidth = 10
-const gridHeight = 22
-const vanishZone = 2
+const gridHeight = 23
+const vanishZone = 3
 const spriteSize = 32
 const dasDelay = 8
 var pokeball0 = preload("res://spr/poke0.png")
@@ -44,7 +44,7 @@ func drawGrid():
 		for y in range(vanishZone-1,gridHeight):
 			var circle = Sprite.new()
 			circle.z_index = -1
-			if (y == 1):
+			if (y == 2):
 				circle.region_enabled = true
 				circle.region_rect = Rect2(0,6,16,10)
 				circle.position = Vector2(x*spriteSize + gridOffsetX,y*spriteSize + gridOffsetY + 16)
@@ -147,32 +147,36 @@ func afterDrop():
 	spawnPiece(currentPiece)
 
 func drawDroppingPoint(piece: Piece):
-	if piece.positionInGrid.y < gridHeight-piece.shape[0].size():
-		deletePieceFromGrid(piece)
-		var droppingY = piece.positionInGrid.y
-		var foundDroppingLine = false
-		while (!foundDroppingLine) && (droppingY<gridHeight-piece.shape[0].size()):
-			for i in range(0,piece.shape.size()):
-				for j in range(piece.shape[0].size()-1,-1,-1):
-					if piece.shape[i][j] != 0:
-						if (grid[piece.positionInGrid.x + i][droppingY + j + 1] != 0):
-							foundDroppingLine = true
-							droppingY-=1
-							break
-			droppingY+=1
-		addPiece(piece)
-		#draw shape with outline
-		if droppingY >= vanishZone:
-			for x in piece.shape.size():
-				for y in piece.shape[0].size():
-					if (piece.shape[x][y] != 0) && (grid[piece.positionInGrid.x + x][droppingY + y] == 0):
-						var circle = Sprite.new()
-						circle.z_index = -1
-						circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
-						circle.texture = pokeballBorder
-						circle.scale = Vector2(2,2)
-						circle.centered = false
-						add_child(circle)
+	deletePieceFromGrid(piece)
+	var droppingY = piece.positionInGrid.y
+	var foundDroppingLine = false
+	#while (!foundDroppingLine) && (droppingY<gridHeight-piece.shape[0].size()):
+	while (!foundDroppingLine):
+		for i in range(0,piece.shape.size()):
+			for j in range(piece.shape[0].size()-1,-1,-1):
+				if piece.shape[i][j] != 0:
+					if droppingY + j +1>=gridHeight:
+						foundDroppingLine = true
+						droppingY-=1
+						break
+					if (grid[piece.positionInGrid.x + i][droppingY + j + 1] != 0):
+						foundDroppingLine = true
+						droppingY-=1
+						break
+		droppingY+=1
+	addPiece(piece)
+	#draw shape with outline
+	if droppingY >= vanishZone:
+		for x in piece.shape.size():
+			for y in piece.shape[0].size():
+				if (piece.shape[x][y] != 0) && (grid[piece.positionInGrid.x + x][droppingY + y] == 0):
+					var circle = Sprite.new()
+					circle.z_index = -1
+					circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
+					circle.texture = pokeballBorder
+					circle.scale = Vector2(2,2)
+					circle.centered = false
+					add_child(circle)
 	
 func hardDropPiece():
 	while (canPieceMoveDown(currentPiece)):
@@ -192,7 +196,7 @@ func hardDropPiece():
 		3: particle.setColor(Color.yellow)
 		4: particle.setColor(Color.purple)
 		5: particle.setColor(Color.green)
-		6: particle.setColor(Color.orange)
+		6: particle.setColor(Color.fuchsia)
 	add_child(particle)
 	particle.emit()
 func checkGameOver():
@@ -200,9 +204,6 @@ func checkGameOver():
 		if grid[i][vanishZone-1] != 0:
 			return true
 	return	false
-
-
-
 func checkAndClearFullLines():
 	var cleared = 0
 	for y in range(gridHeight):
@@ -262,52 +263,51 @@ func movePieceInGrid(piece: Piece, xMovement, yMovement):
 	
 func spawnPiece(piece:Piece):
 	var spawnIn = 1
-	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2,0)
+	var startingX = (gridWidth - piece.shape[0].size())/2
 	for i in range(piece.shape.size()):
-		if piece.shape[i][piece.shape[0].size()-1] != 0 && grid[piece.positionInGrid.x + i][2] != 0:
+		if piece.shape[i][2] != 0 && grid[startingX + i][3] != 0:
 			spawnIn = 0
 			break;
-	
-	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2,spawnIn)
+	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2, spawnIn)
 	addPiece(currentPiece)
 	pass
 
 func canPieceMoveDown(piece: Piece):
-	var rows = piece.shape[0].size()
-	if piece.positionInGrid.y == gridHeight - rows:
-		return false
 	for i in range(0,piece.shape.size()):
 		for j in range(piece.shape[0].size()-1,-1,-1):
 			if piece.shape[i][j] != 0:
+				if piece.positionInGrid.y + j + 1 >= gridHeight:
+					return false
 				if grid[piece.positionInGrid.x + i][piece.positionInGrid.y + j + 1] != 0:
 					return false
 				else: break
 	return true
 	
 func canPieceMoveRight(piece: Piece):
-	if piece.positionInGrid.x == (gridWidth - piece.shape.size()):
-		return false
+	#if piece.positionInGrid.x == (gridWidth - piece.shape.size()):
+		#return false
 	for j in piece.shape[0].size():
 		for i in range (piece.shape.size()-1,-1,-1):
 			if piece.shape[i][j] != 0:
+				if piece.positionInGrid.x + i + 1 >= gridWidth:
+					return false
 				if grid[piece.positionInGrid.x + i +1][piece.positionInGrid.y + j] != 0:
 					return false
 				else: break
 	return true
 
 func canPieceMoveLeft(piece: Piece):
-	if piece.positionInGrid.x == 0:
-		return false
 	for j in piece.shape[0].size():
 		for i in piece.shape.size():
 			if piece.shape[i][j] != 0:
+				if piece.positionInGrid.x + i <= 0:
+					return false
 				if grid[piece.positionInGrid.x + i -1][piece.positionInGrid.y + j] != 0:
 					return false
 				else: break
 	return true
 
 func rotatePiece(piece: Piece):
-	#TODO: rotate around center
 	deletePieceFromGrid(piece)
 	var newShape = MatrixOperations.swap2DMatrixColumns(MatrixOperations.invert2DMatrix(piece.shape))
 	piece.shape = newShape
@@ -316,17 +316,21 @@ func rotatePiece(piece: Piece):
 func canRotate(piece: Piece):
 	var newShape = MatrixOperations.swap2DMatrixColumns(MatrixOperations.invert2DMatrix(piece.shape))
 	#Check borders
-	if (piece.positionInGrid.y + newShape[0].size() > gridHeight):
-		return false
-	if (piece.positionInGrid.x + newShape.size() > gridWidth):
-		return false
 	#Check other blocks
 	deletePieceFromGrid(piece)
 	for i in newShape.size():
 		for j in newShape[i].size():
-			if (newShape[i][j]) != 0 && (grid[piece.positionInGrid.x + i][piece.positionInGrid.y + j] != 0):
-				addPiece(piece)
-				return false
+			if (newShape[i][j]) != 0:
+				#Check borders
+				if (piece.positionInGrid.x + i < 0) || (piece.positionInGrid.x + i >= gridWidth):
+					addPiece(piece)
+					return false
+				if (piece.positionInGrid.y + j + 1 > gridHeight):
+					addPiece(piece)
+					return false
+				if (grid[piece.positionInGrid.x + i][piece.positionInGrid.y + j] != 0):
+					addPiece(piece)
+					return false
 	addPiece(piece)
 	return true
 	
