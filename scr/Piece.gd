@@ -7,10 +7,11 @@ const L_SHAPE = [[0,3,3],[0,3,0],[0,3,0]]
 const O_SHAPE = [[0,0,0,0],[0,4,4,0],[0,4,4,0],[0,0,0,0]]
 const T_SHAPE = [[0,5,0],[0,5,5],[0,5,0]]
 const Z_SHAPE = [[0,6,0],[0,6,6],[0,0,6]]
-const shapes = [I_SHAPE, J_SHAPE, L_SHAPE, O_SHAPE, T_SHAPE, Z_SHAPE]
+const S_SHAPE = [[0,7,0],[7,7,0],[7,0,0]]
+const shapes = [I_SHAPE, J_SHAPE, L_SHAPE, O_SHAPE, T_SHAPE, Z_SHAPE, S_SHAPE]
 var shape
 func _init():
-	shape = shapes[randi() % 6]
+	shape = shapes[randi() % shapes.size()]
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.

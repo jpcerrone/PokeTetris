@@ -12,7 +12,10 @@ var pokeball3 = preload("res://spr/poke3.png")
 var pokeball4 = preload("res://spr/poke4.png")
 var pokeball5 = preload("res://spr/poke5.png")
 var pokeball6 = preload("res://spr/poke6.png")
+var pokeball7 = preload("res://spr/poke7.png")
+
 var pokeballBorder = preload("res://spr/pokeDrop.png")
+var darkMaterial = preload("res://extras/DarkMaterial.tres")
 const Piece = preload("res://scr/Piece.gd")
 var DropParticle = preload("res://scn/DropParticle.tscn")
 var ClearParticle = preload("res://scn/ClearParticle.tscn")
@@ -50,19 +53,23 @@ func drawGrid():
 				circle.position = Vector2(x*spriteSize + gridOffsetX,y*spriteSize + gridOffsetY + 16)
 			else:
 				circle.position = Vector2(x*spriteSize + gridOffsetX,y*spriteSize + gridOffsetY)
-			match (grid[x][y]):
-				(0): circle.texture = pokeball0
-				(1): circle.texture = pokeball1
-				(2): circle.texture = pokeball2
-				(3): circle.texture = pokeball3
-				(4): circle.texture = pokeball4
-				(5): circle.texture = pokeball5
-				(6): circle.texture = pokeball6
+			circle.texture = getTextureForValue(grid[x][y])
 			circle.scale = Vector2(2,2)
 			circle.centered = false
 			add_child(circle)
 			pass
 
+func getTextureForValue(value):
+	match (value):
+		(0): return pokeball0
+		(1): return pokeball1
+		(2): return pokeball2
+		(3): return pokeball3
+		(4): return pokeball4
+		(5): return pokeball5
+		(6): return pokeball6
+		(7): return pokeball7
+	
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	deltaSum = 0
@@ -173,7 +180,8 @@ func drawDroppingPoint(piece: Piece):
 					var circle = Sprite.new()
 					circle.z_index = -1
 					circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
-					circle.texture = pokeballBorder
+					circle.texture = getTextureForValue(piece.getColorIndex())
+					circle.material = darkMaterial
 					circle.scale = Vector2(2,2)
 					circle.centered = false
 					add_child(circle)
@@ -194,9 +202,10 @@ func hardDropPiece():
 		1: particle.setColor(Color.red)
 		2: particle.setColor(Color.blue)
 		3: particle.setColor(Color.yellow)
-		4: particle.setColor(Color.purple)
+		4: particle.setColor(Color.cyan)
 		5: particle.setColor(Color.green)
 		6: particle.setColor(Color.fuchsia)
+		7: particle.setColor(Color.orange)
 	add_child(particle)
 	particle.emit()
 func checkGameOver():
