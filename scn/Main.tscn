@@ -1,11 +1,10 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scr/Grid.gd" type="Script" id=1]
 [ext_resource path="res://scr/Control.gd" type="Script" id=2]
-[ext_resource path="res://scn/Piece.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scr/Main.gd" type="Script" id=4]
 [ext_resource path="res://spr/poke1.png" type="Texture" id=5]
-[ext_resource path="res://extras/DarkMaterial.tres" type="Material" id=6]
+[ext_resource path="res://scn/Hold.gd" type="Script" id=6]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 4 )
@@ -14,13 +13,31 @@ script = ExtResource( 4 )
 z_index = 1
 script = ExtResource( 1 )
 
-[node name="Piece" parent="." instance=ExtResource( 3 )]
+[node name="Hold" type="Panel" parent="Grid"]
+margin_left = 23.7093
+margin_top = 123.0
+margin_right = 114.709
+margin_bottom = 214.0
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Grid/Hold"]
+margin_left = 24.5038
+margin_top = 97.0197
+margin_right = 64.5038
+margin_bottom = 111.02
+text = "Hold"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="tes" type="Sprite" parent="."]
 light_mask = 0
-material = ExtResource( 6 )
-position = Vector2( 74.0563, 147.34 )
-scale = Vector2( 4, 4 )
+position = Vector2( 109.282, 19.0184 )
+scale = Vector2( 3, 3 )
 texture = ExtResource( 5 )
 
 [node name="Control" type="Control" parent="."]

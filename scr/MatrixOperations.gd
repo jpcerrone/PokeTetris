@@ -34,6 +34,17 @@ func swap2DMatrixColumns(matrix):
 			newMatrix[i][j] = matrix[matrix.size() -1 - i][j]
 	return newMatrix
 
+func removeColumnsFromMatrix(matrix, columnIndexList):
+	var retMatrix = []
+	for i in range(matrix.size()):
+		if !columnIndexList.has(i):
+			retMatrix.append(matrix[i])
+	matrix = retMatrix
+
+func removeRowsFromMatrix(matrix, rowIndexList):
+	for i in range(rowIndexList.size()-1,-1,-1):
+		for j in range(matrix.size()):
+			matrix[j].remove(rowIndexList[i])
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

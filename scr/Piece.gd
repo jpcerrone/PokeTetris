@@ -23,6 +23,51 @@ func getColorIndex():
 				return shape[i][j]
 	return 0
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func getActualSize():
+	var actualSize: Vector2 = Vector2(shape.size(),shape[0].size()) 
+	#Check for empty rows
+	for i in range(shape.size()):
+		var empty = true
+		for j in range(shape[0].size()):
+			if shape[j][i] != 0:
+				empty = false
+				break;
+		if empty:
+			actualSize.y -= 1
+	#Check for empty columns
+	for j in range(shape[0].size()):
+		var empty = true
+		for i in range(shape.size()):
+			if shape[j][i] != 0:
+				empty = false
+				break;
+		if empty:
+			actualSize.x -= 1
+	return actualSize
+	
+func getShapeWithoutBorders():
+	var newShape = shape.duplicate(true)
+	#Check and remove empty rows
+	var rowsToRemove = []
+	for i in range(shape.size()):
+		var empty = true
+		for j in range(shape[0].size()):
+			if shape[j][i] != 0:
+				empty = false
+				break;
+		if empty:
+			rowsToRemove.append(i)
+	MatrixOperations.removeRowsFromMatrix(newShape,rowsToRemove)
+	#Check and remove empty columns
+	var columnsToRemove = []
+	for j in range(newShape.size()):
+		var empty = true
+		for i in range(newShape[0].size()):
+			if newShape[j][i] != 0:
+				empty = false
+				break;
+		if empty:
+			columnsToRemove.append(j)
+	
+	MatrixOperations.removeColumnsFromMatrix(newShape, columnsToRemove)
+	return newShape

@@ -24,6 +24,7 @@ var gridOffsetY
 signal score_change
 signal level_change
 signal lines_change
+
 var timer
 var deltaSum
 var clearedLines
@@ -34,6 +35,8 @@ var score = 0
 #Use this as global instead of passing piece to every function
 var currentPiece
 var speed
+
+var hasSwapped
 func delete_children():
 	for n in get_children():
 		if n.is_class("Sprite"):
@@ -79,12 +82,12 @@ func _ready():
 	dasCounter = 0
 	gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2.0
 	gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2.0
-	currentPiece = get_parent().get_node("Piece")
+	currentPiece = Piece.new()
 	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
 	spawnPiece(currentPiece)
 	drawGrid()
 	drawDroppingPoint(currentPiece)
-	pass # Replace with function body.
+	hasSwapped = false
 
 func addPiece(piece: Piece):
 	for x in piece.shape.size():
@@ -133,6 +136,17 @@ func _physics_process(delta):
 		if canRotate(currentPiece) == true:
 			rotatePiece(currentPiece)
 			sthHappened = true
+	if Input.is_action_just_pressed("swap_piece"):
+		if (!hasSwapped):
+			deletePieceFromGrid(currentPiece)
+			var heldPiece = $Hold.swapPiece(currentPiece)
+			if heldPiece:
+				currentPiece = heldPiece
+			else:
+				currentPiece = Piece.new()
+			spawnPiece(currentPiece)
+			sthHappened = true
+			hasSwapped = true
 	timer += delta
 	if timer >= speed:
 		if canPieceMoveDown(currentPiece):
@@ -152,6 +166,7 @@ func afterDrop():
 	if (checkGameOver()):
 		get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
 	spawnPiece(currentPiece)
+	hasSwapped = false
 
 func drawDroppingPoint(piece: Piece):
 	deletePieceFromGrid(piece)
@@ -269,7 +284,6 @@ func movePieceInGrid(piece: Piece, xMovement, yMovement):
 	piece.positionInGrid.x = piece.positionInGrid.x+xMovement
 	piece.positionInGrid.y = piece.positionInGrid.y+yMovement
 	
-	
 func spawnPiece(piece:Piece):
 	var spawnIn = 1
 	var startingX = (gridWidth - piece.shape[0].size())/2
@@ -278,7 +292,7 @@ func spawnPiece(piece:Piece):
 			spawnIn = 0
 			break;
 	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2, spawnIn)
-	addPiece(currentPiece)
+	addPiece(piece)
 	pass
 
 func canPieceMoveDown(piece: Piece):
