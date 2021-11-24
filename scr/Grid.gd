@@ -37,6 +37,36 @@ var currentPiece
 var speed
 
 var hasSwapped
+
+var currentBag
+var nextBag
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	deltaSum = 0
+	timer = 0
+	speed = 1
+	clearedLines = 0
+	dasCounter = 0
+	
+	gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2.0
+	gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2.0
+	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
+	
+	currentBag = newBag()
+	nextBag = newBag()
+	
+	spawnFromBag()
+	drawGrid()
+	drawDroppingPoint(currentPiece)
+	hasSwapped = false
+
+func newBag():
+	var bagIndexes = [0,1,2,3,4,5,6]
+	var bag = bagIndexes.duplicate()
+	bag.shuffle()
+	return bag
+
 func delete_children():
 	for n in get_children():
 		if n.is_class("Sprite"):
@@ -73,21 +103,6 @@ func getTextureForValue(value):
 		(6): return pokeball6
 		(7): return pokeball7
 	
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	deltaSum = 0
-	timer = 0
-	speed = 1
-	clearedLines = 0
-	dasCounter = 0
-	gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2.0
-	gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2.0
-	currentPiece = Piece.new()
-	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
-	spawnPiece(currentPiece)
-	drawGrid()
-	drawDroppingPoint(currentPiece)
-	hasSwapped = false
 
 func addPiece(piece: Piece):
 	for x in piece.shape.size():
@@ -142,9 +157,9 @@ func _physics_process(delta):
 			var heldPiece = $Hold.swapPiece(currentPiece)
 			if heldPiece:
 				currentPiece = heldPiece
+				spawnPiece(currentPiece)
 			else:
-				currentPiece = Piece.new()
-			spawnPiece(currentPiece)
+				spawnFromBag()
 			sthHappened = true
 			hasSwapped = true
 	timer += delta
@@ -165,7 +180,7 @@ func afterDrop():
 	checkAndClearFullLines()
 	if (checkGameOver()):
 		get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
-	spawnPiece(currentPiece)
+	spawnFromBag()
 	hasSwapped = false
 
 func drawDroppingPoint(piece: Piece):
@@ -284,7 +299,15 @@ func movePieceInGrid(piece: Piece, xMovement, yMovement):
 	piece.positionInGrid.x = piece.positionInGrid.x+xMovement
 	piece.positionInGrid.y = piece.positionInGrid.y+yMovement
 	
-func spawnPiece(piece:Piece):
+func spawnFromBag():
+	currentPiece = Piece.new()
+	if (!currentBag):
+		currentBag = nextBag.duplicate()
+		nextBag = newBag()
+	currentPiece.shape = Piece.shapes[currentBag.pop_front()]
+	spawnPiece(currentPiece)
+
+func spawnPiece(piece: Piece):
 	var spawnIn = 1
 	var startingX = (gridWidth - piece.shape[0].size())/2
 	for i in range(piece.shape.size()):
@@ -293,7 +316,6 @@ func spawnPiece(piece:Piece):
 			break;
 	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2, spawnIn)
 	addPiece(piece)
-	pass
 
 func canPieceMoveDown(piece: Piece):
 	for i in range(0,piece.shape.size()):

@@ -11,7 +11,8 @@ const S_SHAPE = [[0,7,0],[7,7,0],[7,0,0]]
 const shapes = [I_SHAPE, J_SHAPE, L_SHAPE, O_SHAPE, T_SHAPE, Z_SHAPE, S_SHAPE]
 var shape
 func _init():
-	shape = shapes[randi() % shapes.size()]
+	pass
+	#shape = shapes[randi() % shapes.size()]
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -24,6 +25,7 @@ func getColorIndex():
 	return 0
 
 func getActualSize():
+	#TODO: is this used?
 	var actualSize: Vector2 = Vector2(shape.size(),shape[0].size()) 
 	#Check for empty rows
 	for i in range(shape.size()):
