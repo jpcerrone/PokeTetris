@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scr/Grid.gd" type="Script" id=1]
 [ext_resource path="res://scr/Control.gd" type="Script" id=2]
+[ext_resource path="res://scn/Panel.gd" type="Script" id=3]
 [ext_resource path="res://scr/Main.gd" type="Script" id=4]
 [ext_resource path="res://spr/poke1.png" type="Texture" id=5]
 [ext_resource path="res://scn/Hold.gd" type="Script" id=6]
@@ -24,12 +25,32 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="Grid/Hold"]
-margin_left = 24.5038
-margin_top = 97.0197
-margin_right = 64.5038
-margin_bottom = 111.02
+margin_left = 25.2037
+margin_top = 100.519
+margin_right = 65.2037
+margin_bottom = 114.52
 text = "Hold"
 align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NextPieces" type="Panel" parent="Grid"]
+margin_left = 475.0
+margin_top = 108.0
+margin_right = 582.0
+margin_bottom = 467.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Grid/NextPieces"]
+margin_left = 37.0278
+margin_top = 370.931
+margin_right = 77.0278
+margin_bottom = 384.931
+text = "Next"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -158,7 +179,3 @@ color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[connection signal="level_change" from="Grid" to="Control" method="_on_Grid_level_change"]
-[connection signal="lines_change" from="Grid" to="Control" method="_on_Grid_lines_change"]
-[connection signal="score_change" from="Grid" to="Control" method="_on_Grid_score_change"]

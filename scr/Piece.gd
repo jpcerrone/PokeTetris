@@ -9,6 +9,7 @@ const T_SHAPE = [[0,5,0],[0,5,5],[0,5,0]]
 const Z_SHAPE = [[0,6,0],[0,6,6],[0,0,6]]
 const S_SHAPE = [[0,7,0],[7,7,0],[7,0,0]]
 const shapes = [I_SHAPE, J_SHAPE, L_SHAPE, O_SHAPE, T_SHAPE, Z_SHAPE, S_SHAPE]
+
 var shape
 func _init():
 	pass
@@ -73,3 +74,6 @@ func getShapeWithoutBorders():
 	
 	MatrixOperations.removeColumnsFromMatrix(newShape, columnsToRemove)
 	return newShape
+
+func getTextureForPiece():
+	return PokeballTextures.getTextureForColorIndex(getColorIndex())

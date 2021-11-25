@@ -5,22 +5,16 @@ const gridHeight = 23
 const vanishZone = 3
 const spriteSize = 32
 const dasDelay = 8
-var pokeball0 = preload("res://spr/poke0.png")
-var pokeball1 = preload("res://spr/poke1.png")
-var pokeball2 = preload("res://spr/poke2.png")
-var pokeball3 = preload("res://spr/poke3.png")
-var pokeball4 = preload("res://spr/poke4.png")
-var pokeball5 = preload("res://spr/poke5.png")
-var pokeball6 = preload("res://spr/poke6.png")
-var pokeball7 = preload("res://spr/poke7.png")
 
 var pokeballBorder = preload("res://spr/pokeDrop.png")
 var darkMaterial = preload("res://extras/DarkMaterial.tres")
 const Piece = preload("res://scr/Piece.gd")
 var DropParticle = preload("res://scn/DropParticle.tscn")
 var ClearParticle = preload("res://scn/ClearParticle.tscn")
+
 var gridOffsetX
 var gridOffsetY
+
 signal score_change
 signal level_change
 signal lines_change
@@ -57,14 +51,20 @@ func _ready():
 	nextBag = newBag()
 	
 	spawnFromBag()
+	$NextPieces.drawPieces(currentBag, nextBag)
 	drawGrid()
 	drawDroppingPoint(currentPiece)
 	hasSwapped = false
 
 func newBag():
 	var bagIndexes = [0,1,2,3,4,5,6]
-	var bag = bagIndexes.duplicate()
-	bag.shuffle()
+	var newBagIndexes = bagIndexes.duplicate()
+	newBagIndexes.shuffle()
+	var bag = []
+	while (!newBagIndexes.empty()):
+		var piece = Piece.new()
+		piece.shape = Piece.shapes[newBagIndexes.pop_back()]
+		bag.append(piece)
 	return bag
 
 func delete_children():
@@ -86,23 +86,11 @@ func drawGrid():
 				circle.position = Vector2(x*spriteSize + gridOffsetX,y*spriteSize + gridOffsetY + 16)
 			else:
 				circle.position = Vector2(x*spriteSize + gridOffsetX,y*spriteSize + gridOffsetY)
-			circle.texture = getTextureForValue(grid[x][y])
+			circle.texture = PokeballTextures.getTextureForColorIndex(grid[x][y])
 			circle.scale = Vector2(2,2)
 			circle.centered = false
 			add_child(circle)
 			pass
-
-func getTextureForValue(value):
-	match (value):
-		(0): return pokeball0
-		(1): return pokeball1
-		(2): return pokeball2
-		(3): return pokeball3
-		(4): return pokeball4
-		(5): return pokeball5
-		(6): return pokeball6
-		(7): return pokeball7
-	
 
 func addPiece(piece: Piece):
 	for x in piece.shape.size():
@@ -210,7 +198,7 @@ func drawDroppingPoint(piece: Piece):
 					var circle = Sprite.new()
 					circle.z_index = -1
 					circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
-					circle.texture = getTextureForValue(piece.getColorIndex())
+					circle.texture = piece.getTextureForPiece()
 					circle.material = darkMaterial
 					circle.scale = Vector2(2,2)
 					circle.centered = false
@@ -300,12 +288,12 @@ func movePieceInGrid(piece: Piece, xMovement, yMovement):
 	piece.positionInGrid.y = piece.positionInGrid.y+yMovement
 	
 func spawnFromBag():
-	currentPiece = Piece.new()
 	if (!currentBag):
 		currentBag = nextBag.duplicate()
 		nextBag = newBag()
-	currentPiece.shape = Piece.shapes[currentBag.pop_front()]
+	currentPiece = currentBag.pop_front()
 	spawnPiece(currentPiece)
+	$NextPieces.drawPieces(currentBag, nextBag)
 
 func spawnPiece(piece: Piece):
 	var spawnIn = 1
