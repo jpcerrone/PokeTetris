@@ -1,12 +1,13 @@
 extends Node2D
+
 var grid = []
 const gridWidth = 10
 const gridHeight = 23
 const vanishZone = 3
+
 const spriteSize = 32
 const dasDelay = 8
 
-var pokeballBorder = preload("res://spr/pokeDrop.png")
 var darkMaterial = preload("res://extras/DarkMaterial.tres")
 const Piece = preload("res://scr/Piece.gd")
 var DropParticle = preload("res://scn/DropParticle.tscn")
@@ -15,10 +16,6 @@ var ClearParticle = preload("res://scn/ClearParticle.tscn")
 var gridOffsetX
 var gridOffsetY
 
-signal score_change
-signal level_change
-signal lines_change
-
 var timer
 var deltaSum
 var clearedLines
@@ -26,8 +23,8 @@ var dasCounter
 var lines = 0
 var level = 1
 var score = 0
-#Use this as global instead of passing piece to every function
-var currentPiece
+
+var currentPiece: Piece
 var speed
 
 var hasSwapped
@@ -51,9 +48,9 @@ func _ready():
 	nextBag = newBag()
 	
 	spawnFromBag()
-	$NextPieces.drawPieces(currentBag, nextBag)
+	$UI/NextPieces.drawPieces(currentBag, nextBag)
 	drawGrid()
-	drawDroppingPoint(currentPiece)
+	drawDroppingPoint()
 	hasSwapped = false
 
 func newBag():
@@ -67,19 +64,12 @@ func newBag():
 		bag.append(piece)
 	return bag
 
-func delete_children():
-	for n in get_children():
-		if n.is_class("Sprite"):
-			remove_child(n)
-			n.queue_free()
-
 func drawGrid():
 	#TODO: figure out better way to do this than delete children
-	delete_children()
+	Utilities.delete_children(self)
 	for x in range(gridWidth):
 		for y in range(vanishZone-1,gridHeight):
 			var circle = Sprite.new()
-			circle.z_index = -1
 			if (y == 2):
 				circle.region_enabled = true
 				circle.region_rect = Rect2(0,6,16,10)
@@ -90,45 +80,44 @@ func drawGrid():
 			circle.scale = Vector2(2,2)
 			circle.centered = false
 			add_child(circle)
-			pass
 
-func addPiece(piece: Piece):
-	for x in piece.shape.size():
-		for y in piece.shape[0].size():
-			if piece.shape[x][y] != 0:
-				grid[piece.positionInGrid.x+x][piece.positionInGrid.y+y] = piece.shape[x][y]
+func addPiece():
+	for x in currentPiece.shape.size():
+		for y in currentPiece.shape[0].size():
+			if currentPiece.shape[x][y] != 0:
+				grid[currentPiece.positionInGrid.x+x][currentPiece.positionInGrid.y+y] = currentPiece.shape[x][y]
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	var sthHappened = false
 	if Input.is_action_just_pressed("ui_right"):
-		if canPieceMoveRight(currentPiece):
-			movePieceInGrid(currentPiece,1,0)
+		if canPieceMoveRight():
+			movePieceInGrid(1,0)
 			sthHappened = true
 		deltaSum = 0
 		dasCounter = 0
 	if Input.is_action_just_pressed("ui_left"):
-		if canPieceMoveLeft(currentPiece):
-			movePieceInGrid(currentPiece,-1,0)
+		if canPieceMoveLeft():
+			movePieceInGrid(-1,0)
 			sthHappened = true
 		deltaSum = 0
 		dasCounter = 0
 	deltaSum += delta
 	if (deltaSum > 2*delta) && (dasCounter>dasDelay):
 		if Input.is_action_pressed("ui_right"):
-			if canPieceMoveRight(currentPiece):
-				movePieceInGrid(currentPiece,1,0)
+			if canPieceMoveRight():
+				movePieceInGrid(1,0)
 				sthHappened = true
 		if Input.is_action_pressed("ui_left"):
-			if canPieceMoveLeft(currentPiece):
-				movePieceInGrid(currentPiece,-1,0)
+			if canPieceMoveLeft():
+				movePieceInGrid(-1,0)
 				sthHappened = true
 		deltaSum = 0
 	dasCounter+=1
 	if Input.is_action_pressed("ui_down"):
-			if canPieceMoveDown(currentPiece):
-				movePieceInGrid(currentPiece,0,1)
+			if canPieceMoveDown():
+				movePieceInGrid(0,1)
 				score += 1
-				emit_signal("score_change", score)
+				$UI/Score/ScoreNumber.text = str(score)
 				sthHappened = true
 	if Input.is_action_just_pressed("ui_up"):	
 		hardDropPiece()
@@ -136,31 +125,31 @@ func _physics_process(delta):
 		sthHappened = true
 		timer=0
 	if Input.is_action_just_pressed("rotate_piece_left"):
-		if canRotate(currentPiece) == true:
-			rotatePiece(currentPiece)
+		if canRotate() == true:
+			rotatePiece()
 			sthHappened = true
 	if Input.is_action_just_pressed("swap_piece"):
 		if (!hasSwapped):
-			deletePieceFromGrid(currentPiece)
-			var heldPiece = $Hold.swapPiece(currentPiece)
+			deletePieceFromGrid()
+			var heldPiece = $UI/Hold.swapPiece(currentPiece)
 			if heldPiece:
 				currentPiece = heldPiece
-				spawnPiece(currentPiece)
+				spawnPiece()
 			else:
 				spawnFromBag()
 			sthHappened = true
 			hasSwapped = true
 	timer += delta
 	if timer >= speed:
-		if canPieceMoveDown(currentPiece):
-			movePieceInGrid(currentPiece,0,1)
+		if canPieceMoveDown():
+			movePieceInGrid(0,1)
 		else:
 			afterDrop()
 		sthHappened = true
 		timer=0
 	if (sthHappened):
 		drawGrid()
-		drawDroppingPoint(currentPiece)
+		drawDroppingPoint()
 	
 	
 func afterDrop():
@@ -171,46 +160,45 @@ func afterDrop():
 	spawnFromBag()
 	hasSwapped = false
 
-func drawDroppingPoint(piece: Piece):
-	deletePieceFromGrid(piece)
-	var droppingY = piece.positionInGrid.y
+func drawDroppingPoint():
+	deletePieceFromGrid()
+	var droppingY = currentPiece.positionInGrid.y
 	var foundDroppingLine = false
-	#while (!foundDroppingLine) && (droppingY<gridHeight-piece.shape[0].size()):
+
 	while (!foundDroppingLine):
-		for i in range(0,piece.shape.size()):
-			for j in range(piece.shape[0].size()-1,-1,-1):
-				if piece.shape[i][j] != 0:
+		for i in range(0,currentPiece.shape.size()):
+			for j in range(currentPiece.shape[0].size()-1,-1,-1):
+				if currentPiece.shape[i][j] != 0:
 					if droppingY + j +1>=gridHeight:
 						foundDroppingLine = true
 						droppingY-=1
 						break
-					if (grid[piece.positionInGrid.x + i][droppingY + j + 1] != 0):
+					if (grid[currentPiece.positionInGrid.x + i][droppingY + j + 1] != 0):
 						foundDroppingLine = true
 						droppingY-=1
 						break
 		droppingY+=1
-	addPiece(piece)
+	addPiece()
+	
 	#draw shape with outline
 	if droppingY >= vanishZone:
-		for x in piece.shape.size():
-			for y in piece.shape[0].size():
-				if (piece.shape[x][y] != 0) && (grid[piece.positionInGrid.x + x][droppingY + y] == 0):
+		for x in currentPiece.shape.size():
+			for y in currentPiece.shape[0].size():
+				if (currentPiece.shape[x][y] != 0) && (grid[currentPiece.positionInGrid.x + x][droppingY + y] == 0):
 					var circle = Sprite.new()
-					circle.z_index = -1
-					circle.position = Vector2(piece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
-					circle.texture = piece.getTextureForPiece()
+					circle.position = Vector2(currentPiece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
+					circle.texture = currentPiece.getTextureForPiece()
 					circle.material = darkMaterial
 					circle.scale = Vector2(2,2)
 					circle.centered = false
 					add_child(circle)
 	
 func hardDropPiece():
-	while (canPieceMoveDown(currentPiece)):
+	while (canPieceMoveDown()):
 		score += 2
-		emit_signal("score_change", score)
-		movePieceInGrid(currentPiece,0,1)
+		$UI/Score/ScoreNumber.text = str(score)
+		movePieceInGrid(0,1)
 	var particle = DropParticle.instance()
-	#particle.position.x = ((currentPiece.positionInGrid.x* spriteSize +currentPiece.shape.size()*spriteSize)/2) + gridOffsetX
 	particle.position.x = gridOffsetX + ((currentPiece.positionInGrid.x + currentPiece.shape.size()/float(2)))* spriteSize
 	var pixelPosy = (currentPiece.positionInGrid.y+1)* spriteSize
 	particle.position.y = (pixelPosy)/2 + gridOffsetY
@@ -226,11 +214,13 @@ func hardDropPiece():
 		7: particle.setColor(Color.orange)
 	add_child(particle)
 	particle.emit()
+
 func checkGameOver():
 	for i in range (gridWidth):
 		if grid[i][vanishZone-1] != 0:
 			return true
 	return	false
+
 func checkAndClearFullLines():
 	var cleared = 0
 	for y in range(gridHeight):
@@ -268,109 +258,105 @@ func checkAndClearFullLines():
 			4: newScore=800*level
 		score += newScore
 		lines += cleared
-		emit_signal("score_change", score)
-		emit_signal("lines_change", lines)
+		$UI/Score/ScoreNumber.text = str(score)
+		$UI/Lines/LinesNumber.text = str(lines)
 		clearedLines += cleared
 		if (clearedLines >= 10):
 			clearedLines = 0
 			level+=1
 			speed = pow(0.8-(level-1)*0.007,level-1)
-			emit_signal("level_change", level)
+			$UI/Level/LevelNumber.text = str(level)
 
-func movePieceInGrid(piece: Piece, xMovement, yMovement):
-	deletePieceFromGrid(piece)
+func movePieceInGrid(xMovement, yMovement):
+	deletePieceFromGrid()
 	#Write new position
-	for x in range(0,piece.shape.size()):
-		for y in range(0,piece.shape[0].size()):
-			if piece.shape[x][y] != 0:
-				grid[x+xMovement+piece.positionInGrid.x][y+yMovement+piece.positionInGrid.y] = piece.shape[x][y]
-	piece.positionInGrid.x = piece.positionInGrid.x+xMovement
-	piece.positionInGrid.y = piece.positionInGrid.y+yMovement
+	for x in range(0,currentPiece.shape.size()):
+		for y in range(0,currentPiece.shape[0].size()):
+			if currentPiece.shape[x][y] != 0:
+				grid[x+xMovement+currentPiece.positionInGrid.x][y+yMovement+currentPiece.positionInGrid.y] = currentPiece.shape[x][y]
+	currentPiece.positionInGrid.x = currentPiece.positionInGrid.x+xMovement
+	currentPiece.positionInGrid.y = currentPiece.positionInGrid.y+yMovement
 	
 func spawnFromBag():
 	if (!currentBag):
 		currentBag = nextBag.duplicate()
 		nextBag = newBag()
 	currentPiece = currentBag.pop_front()
-	spawnPiece(currentPiece)
-	$NextPieces.drawPieces(currentBag, nextBag)
+	spawnPiece()
+	$UI/NextPieces.drawPieces(currentBag, nextBag)
 
-func spawnPiece(piece: Piece):
+func spawnPiece():
 	var spawnIn = 1
-	var startingX = (gridWidth - piece.shape[0].size())/2
-	for i in range(piece.shape.size()):
-		if piece.shape[i][2] != 0 && grid[startingX + i][3] != 0:
+	var startingX = (gridWidth - currentPiece.shape[0].size())/2
+	for i in range(currentPiece.shape.size()):
+		if currentPiece.shape[i][2] != 0 && grid[startingX + i][3] != 0:
 			spawnIn = 0
 			break;
-	piece.positionInGrid = Vector2((gridWidth - piece.shape[0].size())/2, spawnIn)
-	addPiece(piece)
+	currentPiece.positionInGrid = Vector2((gridWidth - currentPiece.shape[0].size())/2, spawnIn)
+	addPiece()
 
-func canPieceMoveDown(piece: Piece):
-	for i in range(0,piece.shape.size()):
-		for j in range(piece.shape[0].size()-1,-1,-1):
-			if piece.shape[i][j] != 0:
-				if piece.positionInGrid.y + j + 1 >= gridHeight:
+func canPieceMoveDown():
+	for i in range(0,currentPiece.shape.size()):
+		for j in range(currentPiece.shape[0].size()-1,-1,-1):
+			if currentPiece.shape[i][j] != 0:
+				if currentPiece.positionInGrid.y + j + 1 >= gridHeight:
 					return false
-				if grid[piece.positionInGrid.x + i][piece.positionInGrid.y + j + 1] != 0:
+				if grid[currentPiece.positionInGrid.x + i][currentPiece.positionInGrid.y + j + 1] != 0:
 					return false
 				else: break
 	return true
 	
-func canPieceMoveRight(piece: Piece):
-	#if piece.positionInGrid.x == (gridWidth - piece.shape.size()):
-		#return false
-	for j in piece.shape[0].size():
-		for i in range (piece.shape.size()-1,-1,-1):
-			if piece.shape[i][j] != 0:
-				if piece.positionInGrid.x + i + 1 >= gridWidth:
+func canPieceMoveRight():
+	for j in currentPiece.shape[0].size():
+		for i in range (currentPiece.shape.size()-1,-1,-1):
+			if currentPiece.shape[i][j] != 0:
+				if currentPiece.positionInGrid.x + i + 1 >= gridWidth:
 					return false
-				if grid[piece.positionInGrid.x + i +1][piece.positionInGrid.y + j] != 0:
+				if grid[currentPiece.positionInGrid.x + i +1][currentPiece.positionInGrid.y + j] != 0:
 					return false
 				else: break
 	return true
 
-func canPieceMoveLeft(piece: Piece):
-	for j in piece.shape[0].size():
-		for i in piece.shape.size():
-			if piece.shape[i][j] != 0:
-				if piece.positionInGrid.x + i <= 0:
+func canPieceMoveLeft():
+	for j in currentPiece.shape[0].size():
+		for i in currentPiece.shape.size():
+			if currentPiece.shape[i][j] != 0:
+				if currentPiece.positionInGrid.x + i <= 0:
 					return false
-				if grid[piece.positionInGrid.x + i -1][piece.positionInGrid.y + j] != 0:
+				if grid[currentPiece.positionInGrid.x + i -1][currentPiece.positionInGrid.y + j] != 0:
 					return false
 				else: break
 	return true
 
-func rotatePiece(piece: Piece):
-	deletePieceFromGrid(piece)
-	var newShape = MatrixOperations.swap2DMatrixColumns(MatrixOperations.invert2DMatrix(piece.shape))
-	piece.shape = newShape
-	addPiece(piece)
+func rotatePiece():
+	deletePieceFromGrid()
+	var newShape = MatrixOperations.swap2DMatrixColumns(MatrixOperations.invert2DMatrix(currentPiece.shape))
+	currentPiece.shape = newShape
+	addPiece()
 
-func canRotate(piece: Piece):
-	var newShape = MatrixOperations.swap2DMatrixColumns(MatrixOperations.invert2DMatrix(piece.shape))
-	#Check borders
-	#Check other blocks
-	deletePieceFromGrid(piece)
+func canRotate():
+	var newShape = MatrixOperations.swap2DMatrixColumns(MatrixOperations.invert2DMatrix(currentPiece.shape))
+	deletePieceFromGrid()
 	for i in newShape.size():
 		for j in newShape[i].size():
 			if (newShape[i][j]) != 0:
 				#Check borders
-				if (piece.positionInGrid.x + i < 0) || (piece.positionInGrid.x + i >= gridWidth):
-					addPiece(piece)
+				if (currentPiece.positionInGrid.x + i < 0) || (currentPiece.positionInGrid.x + i >= gridWidth):
+					addPiece()
 					return false
-				if (piece.positionInGrid.y + j + 1 > gridHeight):
-					addPiece(piece)
+				if (currentPiece.positionInGrid.y + j + 1 > gridHeight):
+					addPiece()
 					return false
-				if (grid[piece.positionInGrid.x + i][piece.positionInGrid.y + j] != 0):
-					addPiece(piece)
+				if (grid[currentPiece.positionInGrid.x + i][currentPiece.positionInGrid.y + j] != 0):
+					addPiece()
 					return false
-	addPiece(piece)
+	addPiece()
 	return true
 	
-func deletePieceFromGrid(piece: Piece):
+func deletePieceFromGrid():
 	#Delete old position
-	for x in piece.shape.size():
-		for y in piece.shape[0].size():
-			if piece.shape[x][y] != 0:
-				grid[x+piece.positionInGrid.x][y+piece.positionInGrid.y] = 0
+	for x in currentPiece.shape.size():
+		for y in currentPiece.shape[0].size():
+			if currentPiece.shape[x][y] != 0:
+				grid[x+currentPiece.positionInGrid.x][y+currentPiece.positionInGrid.y] = 0
 	

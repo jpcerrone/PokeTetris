@@ -19,6 +19,7 @@ config/icon="res://spr/icon.png"
 Global="*res://scn/Global.tscn"
 MatrixOperations="*res://scn/MatrixOperations.tscn"
 PokeballTextures="*res://scr/PokeballTextures.gd"
+Utilities="*res://scr/Utilities.gd"
 
 [display]
 

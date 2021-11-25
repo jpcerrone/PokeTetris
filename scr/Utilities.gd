@@ -1,4 +1,4 @@
-extends Control
+extends Node
 
 
 # Declare member variables here. Examples:
@@ -11,7 +11,11 @@ func _ready():
 	pass # Replace with function body.
 
 
+func delete_children(node):
+	for n in node.get_children():
+		if n.is_class("Sprite"):
+			node.remove_child(n)
+			n.queue_free()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
-

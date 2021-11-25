@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scr/Grid.gd" type="Script" id=1]
-[ext_resource path="res://scr/Control.gd" type="Script" id=2]
 [ext_resource path="res://scn/Panel.gd" type="Script" id=3]
 [ext_resource path="res://scr/Main.gd" type="Script" id=4]
 [ext_resource path="res://spr/poke1.png" type="Texture" id=5]
@@ -14,7 +13,15 @@ script = ExtResource( 4 )
 z_index = 1
 script = ExtResource( 1 )
 
-[node name="Hold" type="Panel" parent="Grid"]
+[node name="UI" type="Control" parent="Grid"]
+show_behind_parent = true
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Hold" type="Panel" parent="Grid/UI"]
 margin_left = 23.7093
 margin_top = 123.0
 margin_right = 114.709
@@ -24,7 +31,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="Grid/Hold"]
+[node name="Label" type="Label" parent="Grid/UI/Hold"]
 margin_left = 25.2037
 margin_top = 100.519
 margin_right = 65.2037
@@ -35,7 +42,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NextPieces" type="Panel" parent="Grid"]
+[node name="NextPieces" type="Panel" parent="Grid/UI"]
 margin_left = 475.0
 margin_top = 108.0
 margin_right = 582.0
@@ -45,7 +52,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="Grid/NextPieces"]
+[node name="Label" type="Label" parent="Grid/UI/NextPieces"]
 margin_left = 37.0278
 margin_top = 370.931
 margin_right = 77.0278
@@ -55,29 +62,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="tes" type="Sprite" parent="."]
-light_mask = 0
-position = Vector2( 109.282, 19.0184 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 5 )
-
-[node name="Control" type="Control" parent="."]
-show_behind_parent = true
-margin_right = 40.0
-margin_bottom = 40.0
-script = ExtResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Score" type="Panel" parent="Control"]
+[node name="Score" type="Panel" parent="Grid/UI"]
 margin_right = 133.0
 margin_bottom = 40.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScoreText" type="Label" parent="Control/Score"]
+[node name="ScoreText" type="Label" parent="Grid/UI/Score"]
 margin_left = 1.0
 margin_right = 132.0
 margin_bottom = 40.0
@@ -87,7 +79,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScoreNumber" type="Label" parent="Control/Score"]
+[node name="ScoreNumber" type="Label" parent="Grid/UI/Score"]
 margin_left = 1.0
 margin_top = 1.0
 margin_right = 132.0
@@ -99,7 +91,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Level" type="Panel" parent="Control"]
+[node name="Level" type="Panel" parent="Grid/UI"]
 margin_left = 523.0
 margin_right = 600.0
 margin_bottom = 40.0
@@ -107,7 +99,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LevelText" type="Label" parent="Control/Level"]
+[node name="LevelText" type="Label" parent="Grid/UI/Level"]
 margin_left = 2.32257
 margin_right = 69.3226
 margin_bottom = 40.0
@@ -117,7 +109,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LevelNumber" type="Label" parent="Control/Level"]
+[node name="LevelNumber" type="Label" parent="Grid/UI/Level"]
 margin_right = 58.0
 margin_bottom = 40.0
 text = "1"
@@ -127,7 +119,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Lines" type="Panel" parent="Control"]
+[node name="Lines" type="Panel" parent="Grid/UI"]
 margin_left = 514.924
 margin_top = 760.0
 margin_right = 600.924
@@ -136,7 +128,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LinesText" type="Label" parent="Control/Lines"]
+[node name="LinesText" type="Label" parent="Grid/UI/Lines"]
 margin_left = 2.92395
 margin_top = 14.6197
 margin_right = 42.924
@@ -146,7 +138,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LinesNumber" type="Label" parent="Control/Lines"]
+[node name="LinesNumber" type="Label" parent="Grid/UI/Lines"]
 margin_left = 42.8844
 margin_top = 13.6451
 margin_right = 82.8844
@@ -157,7 +149,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ReferenceRect" type="ReferenceRect" parent="Control"]
+[node name="ReferenceRect" type="ReferenceRect" parent="Grid/UI"]
 show_behind_parent = true
 margin_left = 139.0
 margin_top = 108.0
@@ -170,7 +162,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorRect" type="ColorRect" parent="Control/ReferenceRect"]
+[node name="ColorRect" type="ColorRect" parent="Grid/UI/ReferenceRect"]
 show_behind_parent = true
 light_mask = 0
 margin_right = 322.0
@@ -179,3 +171,9 @@ color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="ScoreSprite" type="Sprite" parent="Grid/UI"]
+light_mask = 0
+position = Vector2( 109.282, 19.0184 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 5 )

@@ -13,7 +13,7 @@ func _ready():
 	pass # Replace with function body.
 
 func drawPieces(currentBag, nextBag):
-	delete_children()
+	Utilities.delete_children(self)
 	var fullQueue = currentBag.duplicate()
 	fullQueue.append_array(nextBag)
 	for i in range(numberOfPieces):
@@ -33,11 +33,4 @@ func drawPiece(piece: Piece, offset):
 				circle.centered = false
 				circle.texture = piece.getTextureForPiece()
 				add_child(circle)
-
-func delete_children():
-	#REFACTOR ABSTARACT
-	for n in get_children():
-		if n.is_class("Sprite"):
-			remove_child(n)
-			n.queue_free()
 			

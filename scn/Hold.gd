@@ -22,7 +22,7 @@ func drawPiece():
 	var panelMidPoint = rect_size.x/2.0
 	var pieceSize = Vector2(shapeWithoutBorders.size() * spriteSize, shapeWithoutBorders[0].size() * spriteSize)
 	var origin = Vector2(panelMidPoint - pieceSize.x/2.0,panelMidPoint - pieceSize.y/2.0)
-	delete_children()
+	Utilities.delete_children(self)
 
 	for i in range(shapeWithoutBorders.size()):
 		for j in range(shapeWithoutBorders[0].size()):
@@ -37,11 +37,3 @@ func drawPiece():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
-
-func delete_children():
-	#REFACTOR ABSTARACT
-	for n in get_children():
-		if n.is_class("Sprite"):
-			remove_child(n)
-			n.queue_free()
-
