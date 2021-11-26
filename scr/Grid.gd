@@ -32,6 +32,7 @@ var hasSwapped
 var currentBag
 var nextBag
 
+enum Direction {CLOCKWISE, ANTICLOCKWISE}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	deltaSum = 0
@@ -124,9 +125,13 @@ func _physics_process(delta):
 		afterDrop()
 		sthHappened = true
 		timer=0
-	if Input.is_action_just_pressed("rotate_piece_left"):
-		if canRotate() == true:
-			rotatePiece()
+	if Input.is_action_just_pressed("rotate_clockwise"):
+		if canRotate(Direction.CLOCKWISE) == true:
+			rotatePiece(Direction.CLOCKWISE)
+			sthHappened = true
+	if Input.is_action_just_pressed("rotate_anticlockwise"):
+		if canRotate(Direction.ANTICLOCKWISE) == true:
+			rotatePiece(Direction.ANTICLOCKWISE)
 			sthHappened = true
 	if Input.is_action_just_pressed("swap_piece"):
 		if (!hasSwapped):
@@ -328,14 +333,22 @@ func canPieceMoveLeft():
 				else: break
 	return true
 
-func rotatePiece():
+func rotatePiece(direction):
 	deletePieceFromGrid()
-	var newShape = MatrixOperations.swap2DMatrixColumns(MatrixOperations.invert2DMatrix(currentPiece.shape))
+	var newShape = MatrixOperations.invert2DMatrix(currentPiece.shape)
+	if (direction == Direction.CLOCKWISE):
+		newShape = MatrixOperations.swap2DMatrixColumns(newShape)
+	else:
+		newShape = MatrixOperations.swap2DMatrixRows(newShape)
 	currentPiece.shape = newShape
 	addPiece()
 
-func canRotate():
-	var newShape = MatrixOperations.swap2DMatrixColumns(MatrixOperations.invert2DMatrix(currentPiece.shape))
+func canRotate(direction):
+	var newShape = MatrixOperations.invert2DMatrix(currentPiece.shape)
+	if (direction == Direction.CLOCKWISE):
+		newShape = MatrixOperations.swap2DMatrixColumns(newShape)
+	else:
+		newShape = MatrixOperations.swap2DMatrixRows(newShape)
 	deletePieceFromGrid()
 	for i in newShape.size():
 		for j in newShape[i].size():

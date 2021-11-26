@@ -33,6 +33,13 @@ func swap2DMatrixColumns(matrix):
 		for j in matrix[i].size():
 			newMatrix[i][j] = matrix[matrix.size() -1 - i][j]
 	return newMatrix
+	
+func swap2DMatrixRows(matrix):
+	var newMatrix = MatrixOperations.create_2d_array(matrix.size(), matrix[0].size(), 0)
+	for j in matrix[0].size():
+		for i in matrix.size():
+			newMatrix[i][j] = matrix[i][matrix.size() -1 - j]
+	return newMatrix
 
 func removeColumnsFromMatrix(matrix, columnIndexList):
 	var retMatrix = []

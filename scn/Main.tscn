@@ -91,6 +91,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="ScoreSprite" type="Sprite" parent="Grid/UI/Score"]
+light_mask = 0
+position = Vector2( 109.282, 19.0184 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 5 )
+
 [node name="Level" type="Panel" parent="Grid/UI"]
 margin_left = 523.0
 margin_right = 600.0
@@ -171,9 +177,3 @@ color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="ScoreSprite" type="Sprite" parent="Grid/UI"]
-light_mask = 0
-position = Vector2( 109.282, 19.0184 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 5 )
