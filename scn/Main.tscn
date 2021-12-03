@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scr/Grid.gd" type="Script" id=1]
+[ext_resource path="res://spr/background.png" type="Texture" id=2]
 [ext_resource path="res://scn/Panel.gd" type="Script" id=3]
 [ext_resource path="res://scr/Main.gd" type="Script" id=4]
 [ext_resource path="res://spr/poke1.png" type="Texture" id=5]
@@ -156,7 +157,6 @@ __meta__ = {
 }
 
 [node name="ReferenceRect" type="ReferenceRect" parent="Grid/UI"]
-show_behind_parent = true
 margin_left = 139.0
 margin_top = 108.0
 margin_right = 460.0
@@ -174,6 +174,16 @@ light_mask = 0
 margin_right = 322.0
 margin_bottom = 662.0
 color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="Grid/UI"]
+show_behind_parent = true
+margin_right = 40.0
+margin_bottom = 40.0
+rect_scale = Vector2( 4, 4 )
+texture = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

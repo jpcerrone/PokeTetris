@@ -12,6 +12,7 @@ var darkMaterial = preload("res://extras/DarkMaterial.tres")
 const Piece = preload("res://scr/Piece.gd")
 var DropParticle = preload("res://scn/DropParticle.tscn")
 var ClearParticle = preload("res://scn/ClearParticle.tscn")
+var HoldParticle = preload("res://scn/HoldParticle.tscn")
 
 var gridOffsetX
 var gridOffsetY
@@ -136,6 +137,14 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("swap_piece"):
 		if (!hasSwapped):
 			deletePieceFromGrid()
+			#Particle
+			var particle = HoldParticle.instance()
+			particle.setDestination($UI/Hold.rect_position + $UI/Hold.rect_size/2)
+			
+			particle.texture = currentPiece.getTextureForPiece()
+			add_child(particle)
+			#TODO REFACTOR THIS
+			particle.emit(Vector2(spriteSize*(currentPiece.positionInGrid.x + currentPiece.getShapeWithoutBorders().size()/2.0) + gridOffsetX ,spriteSize*(currentPiece.positionInGrid.y++ currentPiece.getShapeWithoutBorders()[0].size()/2.0) + gridOffsetY ))
 			var heldPiece = $UI/Hold.swapPiece(currentPiece)
 			if heldPiece:
 				currentPiece = heldPiece

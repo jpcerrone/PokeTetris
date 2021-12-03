@@ -22,6 +22,7 @@ hue_variation_random = 1.0
 
 [node name="Particles2D" type="Particles2D"]
 position = Vector2( 175.902, 164.405 )
+emitting = false
 amount = 32
 lifetime = 5.0
 one_shot = true

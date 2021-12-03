@@ -24,29 +24,6 @@ func getColorIndex():
 			if shape[i][j] != 0:
 				return shape[i][j]
 	return 0
-
-func getActualSize():
-	#TODO: is this used?
-	var actualSize: Vector2 = Vector2(shape.size(),shape[0].size()) 
-	#Check for empty rows
-	for i in range(shape.size()):
-		var empty = true
-		for j in range(shape[0].size()):
-			if shape[j][i] != 0:
-				empty = false
-				break;
-		if empty:
-			actualSize.y -= 1
-	#Check for empty columns
-	for j in range(shape[0].size()):
-		var empty = true
-		for i in range(shape.size()):
-			if shape[j][i] != 0:
-				empty = false
-				break;
-		if empty:
-			actualSize.x -= 1
-	return actualSize
 	
 func getShapeWithoutBorders():
 	var newShape = shape.duplicate(true)

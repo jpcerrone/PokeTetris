@@ -11,6 +11,7 @@ func _ready():
 	pass # Replace with function body.
 
 func swapPiece(piece: Piece):
+	#Swap
 	piece.shape = Piece.shapes[piece.getColorIndex()-1]
 	var returnPiece = holdPiece
 	holdPiece = piece
