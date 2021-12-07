@@ -187,3 +187,9 @@ texture = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="LockTimer" type="Timer" parent="Grid"]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="timeout" from="Grid/LockTimer" to="Grid" method="_on_LockTimer_timeout"]

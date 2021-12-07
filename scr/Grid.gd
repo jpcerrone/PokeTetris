@@ -7,6 +7,7 @@ const vanishZone = 3
 
 const spriteSize = 32
 const dasDelay = 8
+const infinityValue = 15
 
 var darkMaterial = preload("res://extras/DarkMaterial.tres")
 const Piece = preload("res://scr/Piece.gd")
@@ -24,6 +25,8 @@ var dasCounter
 var lines = 0
 var level = 1
 var score = 0
+var actions = 0
+var prevActions = 0
 
 var currentPiece: Piece
 var speed
@@ -95,24 +98,29 @@ func _physics_process(delta):
 		if canPieceMoveRight():
 			movePieceInGrid(1,0)
 			sthHappened = true
+			actions += 1
 		deltaSum = 0
 		dasCounter = 0
 	if Input.is_action_just_pressed("ui_left"):
 		if canPieceMoveLeft():
 			movePieceInGrid(-1,0)
 			sthHappened = true
+			actions += 1
 		deltaSum = 0
 		dasCounter = 0
+
 	deltaSum += delta
 	if (deltaSum > 2*delta) && (dasCounter>dasDelay):
 		if Input.is_action_pressed("ui_right"):
 			if canPieceMoveRight():
 				movePieceInGrid(1,0)
 				sthHappened = true
+				actions += 1
 		if Input.is_action_pressed("ui_left"):
 			if canPieceMoveLeft():
 				movePieceInGrid(-1,0)
 				sthHappened = true
+				actions += 1
 		deltaSum = 0
 	dasCounter+=1
 	if Input.is_action_pressed("ui_down"):
@@ -121,19 +129,23 @@ func _physics_process(delta):
 				score += 1
 				$UI/Score/ScoreNumber.text = str(score)
 				sthHappened = true
+			actions = 0
 	if Input.is_action_just_pressed("ui_up"):	
 		hardDropPiece()
 		afterDrop()
 		sthHappened = true
 		timer=0
+		actions = 0
 	if Input.is_action_just_pressed("rotate_clockwise"):
 		if canRotate(Direction.CLOCKWISE) == true:
 			rotatePiece(Direction.CLOCKWISE)
 			sthHappened = true
+			actions += 1
 	if Input.is_action_just_pressed("rotate_anticlockwise"):
 		if canRotate(Direction.ANTICLOCKWISE) == true:
 			rotatePiece(Direction.ANTICLOCKWISE)
 			sthHappened = true
+			actions += 1
 	if Input.is_action_just_pressed("swap_piece"):
 		if (!hasSwapped):
 			deletePieceFromGrid()
@@ -153,19 +165,34 @@ func _physics_process(delta):
 				spawnFromBag()
 			sthHappened = true
 			hasSwapped = true
+			actions = 0
 	timer += delta
 	if timer >= speed:
 		if canPieceMoveDown():
 			movePieceInGrid(0,1)
+			actions=0
+			sthHappened = true
 		else:
-			afterDrop()
-		sthHappened = true
+			if $LockTimer.time_left == 0:
+				$LockTimer.start()
 		timer=0
+
 	if (sthHappened):
 		drawGrid()
 		drawDroppingPoint()
 	
+func _on_LockTimer_timeout():
+	if (actions > infinityValue) || (prevActions == actions):
+		if !canPieceMoveDown():
+			afterDrop()
+			drawGrid()
+			drawDroppingPoint()
+	else:
+		$LockTimer.start()
+		prevActions = actions
 	
+
+
 func afterDrop():
 	currentPiece = Piece.new()
 	checkAndClearFullLines()
@@ -382,3 +409,5 @@ func deletePieceFromGrid():
 			if currentPiece.shape[x][y] != 0:
 				grid[x+currentPiece.positionInGrid.x][y+currentPiece.positionInGrid.y] = 0
 	
+
+
