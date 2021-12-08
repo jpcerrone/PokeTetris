@@ -1,29 +1,15 @@
 extends Panel
-
+class_name PiecePanel
+ 
 const Piece = preload("res://scr/Piece.gd")
 
-const numberOfPieces = 5
-const separation = 64
+const spriteSize = 16
 
-var spriteSize = 16
-
-# Called when the node enters the scene tree for the first time.
-
-func _ready():
-	pass # Replace with function body.
-
-func drawPieces(currentBag, nextBag):
-	Utilities.delete_children(self)
-	var fullQueue = currentBag.duplicate()
-	fullQueue.append_array(nextBag)
-	for i in range(numberOfPieces):
-		drawPiece(fullQueue[i], i*separation)
-func drawPiece(piece: Piece, offset):
-	#TODO: REPEATED CODE FROM HOLD!!!
+func drawPiece(piece: Piece, yOffset):
 	var shapeWithoutBorders = piece.getShapeWithoutBorders()
 	var panelMidPoint = rect_size.x/2.0
 	var pieceSize = Vector2(shapeWithoutBorders.size() * spriteSize, shapeWithoutBorders[0].size() * spriteSize)
-	var origin = Vector2(panelMidPoint - pieceSize.x/2.0,panelMidPoint - pieceSize.y/2.0 + offset)
+	var origin = Vector2(panelMidPoint - pieceSize.x/2.0,panelMidPoint - pieceSize.y/2.0 + yOffset)
 
 	for i in range(shapeWithoutBorders.size()):
 		for j in range(shapeWithoutBorders[0].size()):

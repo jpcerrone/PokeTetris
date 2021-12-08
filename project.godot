@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Panel",
+"class": "PiecePanel",
+"language": "GDScript",
+"path": "res://scr/PiecePanel.gd"
+} ]
+_global_script_class_icons={
+"PiecePanel": ""
+}
+
 [application]
 
 config/name="Tetris"
@@ -17,9 +27,10 @@ config/icon="res://spr/icon.png"
 [autoload]
 
 Global="*res://scn/Global.tscn"
-MatrixOperations="*res://scn/MatrixOperations.tscn"
 PokeballTextures="*res://scr/PokeballTextures.gd"
 Utilities="*res://scr/Utilities.gd"
+Constants="*res://scr/Constants.gd"
+MatrixOperations="*res://scr/MatrixOperations.gd"
 
 [display]
 

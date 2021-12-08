@@ -4,59 +4,52 @@ var grid = []
 const gridWidth = 10
 const gridHeight = 23
 const vanishZone = 3
-
 const spriteSize = 32
-const dasDelay = 8
-const infinityValue = 15
-
-var darkMaterial = preload("res://extras/DarkMaterial.tres")
-const Piece = preload("res://scr/Piece.gd")
-var DropParticle = preload("res://scn/DropParticle.tscn")
-var ClearParticle = preload("res://scn/ClearParticle.tscn")
-var HoldParticle = preload("res://scn/HoldParticle.tscn")
-
 var gridOffsetX
 var gridOffsetY
 
-var timer
-var deltaSum
-var clearedLines
-var dasCounter
+const dasDelay = 8
+const infinityValue = 15
+
+const Piece = preload("res://scr/Piece.gd")
+var currentPiece: Piece
+
+const darkMaterial = preload("res://extras/DarkMaterial.tres")
+
+const DropParticle = preload("res://scn/DropParticle.tscn")
+const ClearParticle = preload("res://scn/ClearParticle.tscn")
+const HoldParticle = preload("res://scn/HoldParticle.tscn")
+
+var timer = 0
+var deltaSum = 0
+var clearedLines = 0
+var dasCounter = 0
 var lines = 0
 var level = 1
 var score = 0
 var actions = 0
 var prevActions = 0
-
-var currentPiece: Piece
-var speed
-
-var hasSwapped
+var speed = 1
+var hasSwapped = false
 
 var currentBag
 var nextBag
 
 enum Direction {CLOCKWISE, ANTICLOCKWISE}
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	deltaSum = 0
-	timer = 0
-	speed = 1
-	clearedLines = 0
-	dasCounter = 0
-	
 	gridOffsetX = Global.screenSizeX/2.0 - gridWidth*spriteSize/2.0
 	gridOffsetY = Global.screenSizeY/2.0 - (gridHeight+vanishZone-1)*spriteSize/2.0
-	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
+	grid = MatrixOperations.create2DMatrix(gridWidth, gridHeight, 0)
 	
 	currentBag = newBag()
 	nextBag = newBag()
-	
 	spawnFromBag()
 	$UI/NextPieces.drawPieces(currentBag, nextBag)
+	
 	drawGrid()
 	drawDroppingPoint()
-	hasSwapped = false
 
 func newBag():
 	var bagIndexes = [0,1,2,3,4,5,6]
@@ -65,12 +58,11 @@ func newBag():
 	var bag = []
 	while (!newBagIndexes.empty()):
 		var piece = Piece.new()
-		piece.shape = Piece.shapes[newBagIndexes.pop_back()]
+		piece.shape = Constants.SHAPES[newBagIndexes.pop_back()]
 		bag.append(piece)
 	return bag
 
 func drawGrid():
-	#TODO: figure out better way to do this than delete children
 	Utilities.delete_children(self)
 	for x in range(gridWidth):
 		for y in range(vanishZone-1,gridHeight):
@@ -91,6 +83,7 @@ func addPiece():
 		for y in currentPiece.shape[0].size():
 			if currentPiece.shape[x][y] != 0:
 				grid[currentPiece.positionInGrid.x+x][currentPiece.positionInGrid.y+y] = currentPiece.shape[x][y]
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	var sthHappened = false
@@ -151,20 +144,22 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("swap_piece"):
 		if (!hasSwapped):
 			deletePieceFromGrid()
+			
 			#Particle
 			var particle = HoldParticle.instance()
 			particle.setDestination($UI/Hold.rect_position + $UI/Hold.rect_size/2)
-			
 			particle.texture = currentPiece.getTextureForPiece()
 			add_child(particle)
-			#TODO REFACTOR THIS
+			#TODO REFACTOR THIS line
 			particle.emit(Vector2(spriteSize*(currentPiece.positionInGrid.x + currentPiece.getShapeWithoutBorders().size()/2.0) + gridOffsetX ,spriteSize*(currentPiece.positionInGrid.y++ currentPiece.getShapeWithoutBorders()[0].size()/2.0) + gridOffsetY ))
+			
 			var heldPiece = $UI/Hold.swapPiece(currentPiece)
 			if heldPiece:
 				currentPiece = heldPiece
 				spawnPiece()
 			else:
 				spawnFromBag()
+				
 			sthHappened = true
 			hasSwapped = true
 			actions = 0
@@ -192,8 +187,6 @@ func _on_LockTimer_timeout():
 	else:
 		$LockTimer.start()
 		prevActions = actions
-	
-
 
 func afterDrop():
 	currentPiece = Piece.new()
@@ -262,7 +255,7 @@ func checkGameOver():
 	for i in range (gridWidth):
 		if grid[i][vanishZone-1] != 0:
 			return true
-	return	false
+	return false
 
 func checkAndClearFullLines():
 	var cleared = 0
@@ -391,16 +384,19 @@ func getPosibleRotation(direction):
 		newShape = MatrixOperations.swap2DMatrixColumns(newShape)
 	else:
 		newShape = MatrixOperations.swap2DMatrixRows(newShape)
-	var rotationArray
-	var antiClockOffset = 0
+	
+	var rotationState = currentPiece.rotationState
 	# rotation state for 0>>1 is the same as 1>>0 but negative, 
-	# so if anticlowise we go to the next state (0 to 1) by adding 3
+	# so if anticlowise we go to the next state (0 to 1) by adding 3 and modding by 4
 	if (direction == Direction.ANTICLOCKWISE):
-			antiClockOffset = 3 
+		rotationState = (rotationState+3)%4
+	
+	var rotationArray
 	if (currentPiece.shape.size() == 4): #Check for I and O shapes
-		rotationArray = Piece.kickTableI[(currentPiece.rotationState + antiClockOffset)%4]
+		rotationArray = Constants.KICK_TABLE_I[rotationState]
 	else:
-		rotationArray = Piece.kickTable[(currentPiece.rotationState + antiClockOffset)%4]
+		rotationArray = Constants.KICK_TABLE[rotationState]
+	
 	for r in rotationArray.size():
 		var kickValues = rotationArray[r]
 		if (direction == Direction.ANTICLOCKWISE):
@@ -428,6 +424,7 @@ func getPosibleRotation(direction):
 		if canRotate:
 			return kickValues
 	return null
+
 func deletePieceFromGrid():
 	#Delete old position
 	for x in currentPiece.shape.size():
@@ -435,5 +432,3 @@ func deletePieceFromGrid():
 			if currentPiece.shape[x][y] != 0:
 				grid[x+currentPiece.positionInGrid.x][y+currentPiece.positionInGrid.y] = 0
 	
-
-

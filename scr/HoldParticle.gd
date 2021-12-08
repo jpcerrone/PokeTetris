@@ -1,14 +1,5 @@
 extends Particles2D
 var dest: Vector2
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass
 	
 func setDestination(x):
 	self.dest = x
@@ -23,8 +14,5 @@ func emit(piecePositiion: Vector2):
 	preprocess = 0.001*distance
 	lifetime = ltime
 	emitting = true
-	#yield(get_tree().create_timer(5.0), "timeout")
-	#queue_free()
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+	yield(get_tree().create_timer(5.0), "timeout")
+	queue_free()
