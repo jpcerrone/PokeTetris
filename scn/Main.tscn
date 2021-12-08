@@ -64,7 +64,7 @@ __meta__ = {
 }
 
 [node name="Score" type="Panel" parent="Grid/UI"]
-margin_right = 133.0
+margin_right = 202.0
 margin_bottom = 40.0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -81,9 +81,9 @@ __meta__ = {
 }
 
 [node name="ScoreNumber" type="Label" parent="Grid/UI/Score"]
-margin_left = 1.0
+margin_left = 42.3671
 margin_top = 1.0
-margin_right = 132.0
+margin_right = 161.367
 margin_bottom = 39.0
 text = "0"
 align = 1
@@ -94,7 +94,7 @@ __meta__ = {
 
 [node name="ScoreSprite" type="Sprite" parent="Grid/UI/Score"]
 light_mask = 0
-position = Vector2( 109.282, 19.0184 )
+position = Vector2( 180.167, 21.55 )
 scale = Vector2( 3, 3 )
 texture = ExtResource( 5 )
 
@@ -185,6 +185,8 @@ margin_bottom = 40.0
 rect_scale = Vector2( 4, 4 )
 texture = ExtResource( 2 )
 __meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
