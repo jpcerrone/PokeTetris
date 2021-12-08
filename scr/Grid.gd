@@ -45,8 +45,8 @@ func _ready():
 	clearedLines = 0
 	dasCounter = 0
 	
-	gridOffsetX = Global.screenSizeX/2 - gridWidth*spriteSize/2.0
-	gridOffsetY = Global.screenSizeY/2 - gridHeight*spriteSize/2.0
+	gridOffsetX = Global.screenSizeX/2.0 - gridWidth*spriteSize/2.0
+	gridOffsetY = Global.screenSizeY/2.0 - (gridHeight+vanishZone-1)*spriteSize/2.0
 	grid = MatrixOperations.create_2d_array(gridWidth, gridHeight, 0)
 	
 	currentBag = newBag()
@@ -137,13 +137,15 @@ func _physics_process(delta):
 		timer=0
 		actions = 0
 	if Input.is_action_just_pressed("rotate_clockwise"):
-		if canRotate(Direction.CLOCKWISE) == true:
-			rotatePiece(Direction.CLOCKWISE)
+		var kickValues = getPosibleRotation(Direction.CLOCKWISE)
+		if kickValues != null:
+			rotatePiece(Direction.CLOCKWISE, kickValues)
 			sthHappened = true
 			actions += 1
 	if Input.is_action_just_pressed("rotate_anticlockwise"):
-		if canRotate(Direction.ANTICLOCKWISE) == true:
-			rotatePiece(Direction.ANTICLOCKWISE)
+		var kickValues = getPosibleRotation(Direction.ANTICLOCKWISE)
+		if kickValues != null:
+			rotatePiece(Direction.ANTICLOCKWISE, kickValues)
 			sthHappened = true
 			actions += 1
 	if Input.is_action_just_pressed("swap_piece"):
@@ -334,6 +336,7 @@ func spawnPiece():
 			spawnIn = 0
 			break;
 	currentPiece.positionInGrid = Vector2((gridWidth - currentPiece.shape[0].size())/2, spawnIn)
+	currentPiece.rotationState = 0
 	addPiece()
 
 func canPieceMoveDown():
@@ -369,39 +372,62 @@ func canPieceMoveLeft():
 				else: break
 	return true
 
-func rotatePiece(direction):
+func rotatePiece(direction, kickValues: Vector2):
 	deletePieceFromGrid()
 	var newShape = MatrixOperations.invert2DMatrix(currentPiece.shape)
 	if (direction == Direction.CLOCKWISE):
 		newShape = MatrixOperations.swap2DMatrixColumns(newShape)
+		currentPiece.rotationState = (currentPiece.rotationState+1)%4
 	else:
 		newShape = MatrixOperations.swap2DMatrixRows(newShape)
+		currentPiece.rotationState = (currentPiece.rotationState+3)%4 # +3 mod 4 goes to the left (0 1<--(2) 3)
 	currentPiece.shape = newShape
+	currentPiece.positionInGrid += kickValues
 	addPiece()
 
-func canRotate(direction):
+func getPosibleRotation(direction):
 	var newShape = MatrixOperations.invert2DMatrix(currentPiece.shape)
 	if (direction == Direction.CLOCKWISE):
 		newShape = MatrixOperations.swap2DMatrixColumns(newShape)
 	else:
 		newShape = MatrixOperations.swap2DMatrixRows(newShape)
-	deletePieceFromGrid()
-	for i in newShape.size():
-		for j in newShape[i].size():
-			if (newShape[i][j]) != 0:
-				#Check borders
-				if (currentPiece.positionInGrid.x + i < 0) || (currentPiece.positionInGrid.x + i >= gridWidth):
-					addPiece()
-					return false
-				if (currentPiece.positionInGrid.y + j + 1 > gridHeight):
-					addPiece()
-					return false
-				if (grid[currentPiece.positionInGrid.x + i][currentPiece.positionInGrid.y + j] != 0):
-					addPiece()
-					return false
-	addPiece()
-	return true
-	
+	var rotationArray
+	var antiClockOffset = 0
+	# rotation state for 0>>1 is the same as 1>>0 but negative, 
+	# so if anticlowise we go to the next state (0 to 1) by adding 3
+	if (direction == Direction.ANTICLOCKWISE):
+			antiClockOffset = 3 
+	if (currentPiece.shape.size() == 4): #Check for I and O shapes
+		rotationArray = Piece.kickTableI[(currentPiece.rotationState + antiClockOffset)%4]
+	else:
+		rotationArray = Piece.kickTable[(currentPiece.rotationState + antiClockOffset)%4]
+	for r in rotationArray.size():
+		var kickValues = rotationArray[r]
+		if (direction == Direction.ANTICLOCKWISE):
+			kickValues = -kickValues
+		var newPosition = currentPiece.positionInGrid + kickValues
+		var canRotate = true
+		deletePieceFromGrid()
+		for i in newShape.size():
+			for j in newShape[i].size():
+				if (newShape[i][j]) != 0:
+					#Check borders
+					if (newPosition.x + i < 0) || (newPosition.x + i >= gridWidth):
+						addPiece()
+						canRotate = false
+						break
+					if (newPosition.y + j + 1 > gridHeight):
+						addPiece()
+						canRotate = false
+						break
+					if (grid[newPosition.x + i][newPosition.y + j] != 0):
+						addPiece()
+						canRotate = false
+						break
+		addPiece()
+		if canRotate:
+			return kickValues
+	return null
 func deletePieceFromGrid():
 	#Delete old position
 	for x in currentPiece.shape.size():

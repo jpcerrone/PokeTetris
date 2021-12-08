@@ -158,9 +158,9 @@ __meta__ = {
 
 [node name="ReferenceRect" type="ReferenceRect" parent="Grid/UI"]
 margin_left = 139.0
-margin_top = 108.0
+margin_top = 74.0
 margin_right = 460.0
-margin_bottom = 770.0
+margin_bottom = 736.0
 border_color = Color( 0, 0, 0, 1 )
 border_width = 5.0
 editor_only = false
