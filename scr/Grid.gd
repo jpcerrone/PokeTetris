@@ -150,7 +150,6 @@ func _physics_process(delta):
 			particle.setDestination($UI/Hold.rect_position + $UI/Hold.rect_size/2)
 			particle.texture = currentPiece.getTextureForPiece()
 			add_child(particle)
-			#TODO REFACTOR THIS line
 			particle.emit(Vector2(spriteSize*(currentPiece.positionInGrid.x + currentPiece.getShapeWithoutBorders().size()/2.0) + gridOffsetX ,spriteSize*(currentPiece.positionInGrid.y++ currentPiece.getShapeWithoutBorders()[0].size()/2.0) + gridOffsetY ))
 			
 			var heldPiece = $UI/Hold.swapPiece(currentPiece)

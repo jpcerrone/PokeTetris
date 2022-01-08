@@ -1,11 +1,16 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scr/Grid.gd" type="Script" id=1]
-[ext_resource path="res://spr/background.png" type="Texture" id=2]
+[ext_resource path="res://spr/button.png" type="Texture" id=2]
 [ext_resource path="res://scr/NextPieces.gd" type="Script" id=3]
 [ext_resource path="res://scr/Main.gd" type="Script" id=4]
-[ext_resource path="res://spr/poke1.png" type="Texture" id=5]
 [ext_resource path="res://scr/Hold.gd" type="Script" id=6]
+[ext_resource path="res://spr/holdPiece.png" type="Texture" id=7]
+[ext_resource path="res://spr/nextPiece.png" type="Texture" id=8]
+[ext_resource path="res://spr/grid.png" type="Texture" id=9]
+[ext_resource path="res://fonts/UniFont.tres" type="DynamicFont" id=10]
+[ext_resource path="res://audio/Tetris.wav" type="AudioStream" id=11]
+[ext_resource path="res://spr/russia.png" type="Texture" id=12]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 4 )
@@ -22,69 +27,92 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Hold" type="Panel" parent="Grid/UI"]
-margin_left = 23.7093
-margin_top = 123.0
-margin_right = 114.709
-margin_bottom = 214.0
+[node name="Hold" type="Control" parent="Grid/UI"]
+margin_left = 14.0
+margin_top = 117.0
+margin_right = 120.0
+margin_bottom = 227.0
 script = ExtResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label" type="Label" parent="Grid/UI/Hold"]
-margin_left = 25.2037
-margin_top = 100.519
-margin_right = 65.2037
-margin_bottom = 114.52
+margin_top = 114.0
+margin_right = 104.0
+margin_bottom = 130.0
+custom_fonts/font = ExtResource( 10 )
 text = "Hold"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NextPieces" type="Panel" parent="Grid/UI"]
-margin_left = 475.0
-margin_top = 108.0
-margin_right = 582.0
-margin_bottom = 467.0
+[node name="TextureRect" type="TextureRect" parent="Grid/UI/Hold"]
+show_behind_parent = true
+margin_top = 4.0
+margin_right = 26.0
+margin_bottom = 30.0
+grow_horizontal = 0
+grow_vertical = 0
+rect_scale = Vector2( 4, 4 )
+texture = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NextPieces" type="Control" parent="Grid/UI"]
+margin_left = 484.963
+margin_top = 72.0892
+margin_right = 591.963
+margin_bottom = 599.089
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label" type="Label" parent="Grid/UI/NextPieces"]
-margin_left = 37.0278
-margin_top = 370.931
-margin_right = 77.0278
-margin_bottom = 384.931
+margin_left = 1.0
+margin_top = 530.0
+margin_right = 105.0
+margin_bottom = 546.0
+custom_fonts/font = ExtResource( 10 )
 text = "Next"
+align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Score" type="Panel" parent="Grid/UI"]
+[node name="NextSprite" type="TextureRect" parent="Grid/UI/NextPieces"]
+margin_right = 31.0
+margin_bottom = 155.0
+rect_scale = Vector2( 4, 4 )
+texture = ExtResource( 8 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Score" type="Control" parent="Grid/UI"]
 margin_right = 202.0
 margin_bottom = 40.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ScoreText" type="Label" parent="Grid/UI/Score"]
-margin_left = 1.0
-margin_right = 132.0
-margin_bottom = 40.0
-text = "Score:"
+margin_left = 11.1203
+margin_right = 65.1203
+margin_bottom = 38.0
+custom_fonts/font = ExtResource( 10 )
+text = "SCORE:"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ScoreNumber" type="Label" parent="Grid/UI/Score"]
-margin_left = 42.3671
-margin_top = 1.0
-margin_right = 161.367
-margin_bottom = 39.0
+margin_left = 64.0
+margin_right = 147.0
+margin_bottom = 38.0
+custom_fonts/font = ExtResource( 10 )
 text = "0"
 align = 1
 valign = 1
@@ -92,106 +120,137 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScoreSprite" type="Sprite" parent="Grid/UI/Score"]
-light_mask = 0
-position = Vector2( 180.167, 21.55 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 5 )
+[node name="TextureRect" type="TextureRect" parent="Grid/UI/Score"]
+show_behind_parent = true
+margin_right = 51.0
+margin_bottom = 12.0
+rect_scale = Vector2( 3, 3 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Level" type="Panel" parent="Grid/UI"]
-margin_left = 523.0
-margin_right = 600.0
+[node name="Level" type="Control" parent="Grid/UI"]
+margin_left = 498.0
+margin_right = 601.0
 margin_bottom = 40.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LevelText" type="Label" parent="Grid/UI/Level"]
-margin_left = 2.32257
-margin_right = 69.3226
-margin_bottom = 40.0
-text = "Level:"
+anchor_right = 5.0
+margin_left = -39.0
+margin_right = -410.0
+margin_bottom = 38.0
+custom_fonts/font = ExtResource( 10 )
+text = "LEVEL:"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LevelNumber" type="Label" parent="Grid/UI/Level"]
-margin_right = 58.0
-margin_bottom = 40.0
+margin_left = 17.0
+margin_right = 96.0
+margin_bottom = 38.0
+custom_fonts/font = ExtResource( 10 )
 text = "1"
-align = 2
+align = 1
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Lines" type="Panel" parent="Grid/UI"]
-margin_left = 514.924
-margin_top = 760.0
-margin_right = 600.924
-margin_bottom = 800.0
+[node name="TextureRect" type="TextureRect" parent="Grid/UI/Level"]
+show_behind_parent = true
+margin_left = -50.0
+margin_right = 1.0
+margin_bottom = 12.0
+rect_scale = Vector2( 3, 3 )
+texture = ExtResource( 2 )
+expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Lines" type="Control" parent="Grid/UI"]
+margin_left = 478.0
+margin_top = 760.0
+margin_right = 601.0
+margin_bottom = 800.0
+
 [node name="LinesText" type="Label" parent="Grid/UI/Lines"]
-margin_left = 2.92395
-margin_top = 14.6197
-margin_right = 42.924
-margin_bottom = 28.6197
-text = "Lines:"
+margin_left = 9.10788
+margin_top = 4.18677
+margin_right = 85.1079
+margin_bottom = 42.1868
+custom_fonts/font = ExtResource( 10 )
+text = "LINES:"
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LinesNumber" type="Label" parent="Grid/UI/Lines"]
-margin_left = 42.8844
-margin_top = 13.6451
-margin_right = 82.8844
-margin_bottom = 27.6451
+margin_left = 63.0
+margin_top = 4.0
+margin_right = 119.0
+margin_bottom = 42.0
+custom_fonts/font = ExtResource( 10 )
 text = "0"
 align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ReferenceRect" type="ReferenceRect" parent="Grid/UI"]
+[node name="Sprite" type="TextureRect" parent="Grid/UI/Lines"]
+show_behind_parent = true
+margin_left = -12.5654
+margin_top = -148.691
+margin_right = 35.4346
+margin_bottom = -85.6908
+rect_scale = Vector2( 3, 3 )
+texture = ExtResource( 12 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Background" type="ColorRect" parent="Grid/UI"]
+show_behind_parent = true
+margin_right = 600.0
+margin_bottom = 821.0
+color = Color( 0.0431373, 0.0392157, 0.0901961, 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="GridBackground" type="ColorRect" parent="Grid/UI"]
+light_mask = 0
 margin_left = 139.0
 margin_top = 74.0
-margin_right = 460.0
+margin_right = 461.0
 margin_bottom = 736.0
-border_color = Color( 0, 0, 0, 1 )
-border_width = 5.0
-editor_only = false
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ColorRect" type="ColorRect" parent="Grid/UI/ReferenceRect"]
-show_behind_parent = true
-light_mask = 0
-margin_right = 322.0
-margin_bottom = 662.0
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextureRect" type="TextureRect" parent="Grid/UI"]
-show_behind_parent = true
-margin_right = 40.0
-margin_bottom = 40.0
-rect_scale = Vector2( 4, 4 )
-texture = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true,
-"_edit_use_anchors_": false
-}
+[node name="Border" type="Sprite" parent="Grid/UI"]
+position = Vector2( 301.975, 406.864 )
+scale = Vector2( 4.26807, 4.10658 )
+texture = ExtResource( 9 )
 
 [node name="LockTimer" type="Timer" parent="Grid"]
 wait_time = 0.5
 one_shot = true
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 11 )
+autoplay = true
 
 [connection signal="timeout" from="Grid/LockTimer" to="Grid" method="_on_LockTimer_timeout"]

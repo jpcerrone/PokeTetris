@@ -1,4 +1,4 @@
-extends Panel
+extends Control
 class_name PiecePanel
  
 const Piece = preload("res://scr/Piece.gd")
