@@ -2,6 +2,8 @@
 
 A Godot clone of modern versions of tetris. With Pokeballs.
 
+![gameplay](https://github.com/jpcerrone/tetrisGodot/blob/readme/spr/ReadmeDemo.gif)
+
 ## Features
 * Super Rotation System (With wallkicks).
 * Hard and soft dropping.
