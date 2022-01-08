@@ -26,7 +26,6 @@ config/icon="res://spr/icon.png"
 
 [autoload]
 
-Global="*res://scn/Global.tscn"
 PokeballTextures="*res://scr/PokeballTextures.gd"
 Utilities="*res://scr/Utilities.gd"
 Constants="*res://scr/Constants.gd"
@@ -36,6 +35,7 @@ MatrixOperations="*res://scr/MatrixOperations.gd"
 
 window/size/width=600
 window/size/height=800
+window/size/fullscreen=true
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
 

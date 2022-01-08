@@ -241,9 +241,10 @@ __meta__ = {
 }
 
 [node name="Border" type="Sprite" parent="Grid/UI"]
-position = Vector2( 301.975, 406.864 )
+position = Vector2( 130.914, 61.4567 )
 scale = Vector2( 4.26807, 4.10658 )
 texture = ExtResource( 9 )
+centered = false
 
 [node name="LockTimer" type="Timer" parent="Grid"]
 wait_time = 0.5

@@ -35,12 +35,13 @@ var hasSwapped = false
 var currentBag
 var nextBag
 
+const BORDER_OFFSET = 10
 enum Direction {CLOCKWISE, ANTICLOCKWISE}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	gridOffsetX = Global.screenSizeX/2.0 - gridWidth*spriteSize/2.0
-	gridOffsetY = Global.screenSizeY/2.0 - (gridHeight+vanishZone-1)*spriteSize/2.0
+	gridOffsetX = $UI/Border.position.x + BORDER_OFFSET
+	gridOffsetY = $UI/Border.position.y - (vanishZone-1)*spriteSize
 	grid = MatrixOperations.create2DMatrix(gridWidth, gridHeight, 0)
 	
 	currentBag = newBag()
