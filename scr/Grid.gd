@@ -88,6 +88,8 @@ func addPiece():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	var sthHappened = false
+	if Input.is_action_just_pressed("ui_exit"):
+		get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
 	if Input.is_action_just_pressed("ui_right"):
 		if canPieceMoveRight():
 			movePieceInGrid(1,0)

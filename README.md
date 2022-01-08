@@ -22,6 +22,7 @@ A Godot clone of modern versions of tetris. With Pokeballs.
 * Up Key: Hard Drop
 * Down Key: Soft Drop
 * CTRL: Hold piece
+* ESC: Quit game
 
 ## Author
 Juan Cerrone
