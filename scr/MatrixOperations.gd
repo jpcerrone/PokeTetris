@@ -41,4 +41,4 @@ func removeColumnsFromMatrix(matrix, columnIndexList):
 func removeRowsFromMatrix(matrix, rowIndexList):
 	for i in range(rowIndexList.size()-1,-1,-1):
 		for j in range(matrix.size()):
-			matrix[j].remove(rowIndexList[i])
+			matrix[j].remove_at(rowIndexList[i])

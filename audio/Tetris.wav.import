@@ -1,13 +1,14 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
-path="res://.import/Tetris.wav-d537c86c026f5293dbd09f99be67e308.sample"
+type="AudioStreamWAV"
+uid="uid://dtj161d601ncu"
+path="res://.godot/imported/Tetris.wav-d537c86c026f5293dbd09f99be67e308.sample"
 
 [deps]
 
 source_file="res://audio/Tetris.wav"
-dest_files=[ "res://.import/Tetris.wav-d537c86c026f5293dbd09f99be67e308.sample" ]
+dest_files=["res://.godot/imported/Tetris.wav-d537c86c026f5293dbd09f99be67e308.sample"]
 
 [params]
 
@@ -17,5 +18,7 @@ force/max_rate=false
 force/max_rate_hz=44100
 edit/trim=false
 edit/normalize=false
-edit/loop=true
+edit/loop_mode=2
+edit/loop_begin=0
+edit/loop_end=-1
 compress/mode=0

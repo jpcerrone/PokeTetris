@@ -1,31 +1,29 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://bb8wh8ii57hfk"]
 
-[ext_resource path="res://scr/ClearParticle.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://scr/ClearParticle.gd" id="1"]
 
-[sub_resource type="ParticlesMaterial" id=1]
-emission_shape = 2
-emission_box_extents = Vector3( 50, 1, 1 )
-flag_disable_z = true
-direction = Vector3( 0, 0, 0 )
+[sub_resource type="ParticleProcessMaterial" id="1"]
+emission_shape = 3
+emission_box_extents = Vector3(50, 1, 1)
+direction = Vector3(0, 0, 0)
 spread = 180.0
-gravity = Vector3( 0, 250, 0 )
-initial_velocity = 34.88
-angular_velocity = 267.91
-angular_velocity_random = 0.53
-orbit_velocity = 0.0
-orbit_velocity_random = 0.0
-scale = 8.0
-scale_random = 1.0
-color = Color( 1, 0, 0.866667, 1 )
-hue_variation = -0.51
-hue_variation_random = 1.0
+gravity = Vector3(0, 250, 0)
+initial_velocity_min = 34.0
+initial_velocity_max = 34.0
+angular_velocity_min = 257.68
+angular_velocity_max = 318.32
+angle_max = 121.3
+scale_max = 8.0
+color = Color(1, 0, 0.866667, 1)
+hue_variation_min = -1.0
+hue_variation_max = 1.0
 
-[node name="Particles2D" type="Particles2D"]
-position = Vector2( 175.902, 164.405 )
+[node name="GPUParticles2D" type="GPUParticles2D"]
+position = Vector2(175.902, 164.405)
 emitting = false
 amount = 32
+process_material = SubResource("1")
 lifetime = 5.0
 one_shot = true
 explosiveness = 1.0
-process_material = SubResource( 1 )
-script = ExtResource( 1 )
+script = ExtResource("1")

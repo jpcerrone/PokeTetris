@@ -41,7 +41,6 @@ offset_right = 104.0
 offset_bottom = 130.0
 theme_override_fonts/font = ExtResource("10")
 text = "Hold"
-horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="Grid/UI/Hold"]
 show_behind_parent = true
@@ -70,12 +69,11 @@ offset_right = 105.0
 offset_bottom = 546.0
 theme_override_fonts/font = ExtResource("10")
 text = "Next"
-horizontal_alignment = 1
 
 [node name="NextSprite" type="TextureRect" parent="Grid/UI/NextPieces"]
 layout_mode = 0
-offset_right = 26.0
-offset_bottom = 130.0
+offset_right = 31.0
+offset_bottom = 155.0
 scale = Vector2(4, 4)
 texture = ExtResource("8")
 
@@ -91,8 +89,6 @@ offset_right = 65.1203
 offset_bottom = 38.0
 theme_override_fonts/font = ExtResource("10")
 text = "SCORE:"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="ScoreNumber" type="Label" parent="Grid/UI/Score"]
 layout_mode = 0
@@ -101,8 +97,6 @@ offset_right = 147.0
 offset_bottom = 38.0
 theme_override_fonts/font = ExtResource("10")
 text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="Grid/UI/Score"]
 show_behind_parent = true
@@ -127,7 +121,6 @@ offset_right = -410.0
 offset_bottom = 38.0
 theme_override_fonts/font = ExtResource("10")
 text = "LEVEL:"
-vertical_alignment = 1
 
 [node name="LevelNumber" type="Label" parent="Grid/UI/Level"]
 layout_mode = 0
@@ -136,8 +129,6 @@ offset_right = 96.0
 offset_bottom = 38.0
 theme_override_fonts/font = ExtResource("10")
 text = "1"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="Grid/UI/Level"]
 show_behind_parent = true
@@ -164,8 +155,6 @@ offset_right = 85.1079
 offset_bottom = 42.1868
 theme_override_fonts/font = ExtResource("10")
 text = "LINES:"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="LinesNumber" type="Label" parent="Grid/UI/Lines"]
 layout_mode = 0
@@ -175,8 +164,6 @@ offset_right = 119.0
 offset_bottom = 42.0
 theme_override_fonts/font = ExtResource("10")
 text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="Sprite2D" type="TextureRect" parent="Grid/UI/Lines"]
 show_behind_parent = true
@@ -194,7 +181,6 @@ layout_mode = 0
 offset_right = 600.0
 offset_bottom = 821.0
 color = Color(0.0431373, 0.0392157, 0.0901961, 1)
-metadata/_edit_lock_ = true
 
 [node name="GridBackground" type="ColorRect" parent="Grid/UI"]
 light_mask = 0

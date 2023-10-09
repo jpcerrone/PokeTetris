@@ -57,7 +57,7 @@ func newBag():
 	var newBagIndexes = bagIndexes.duplicate()
 	newBagIndexes.shuffle()
 	var bag = []
-	while (!newBagIndexes.empty()):
+	while (!newBagIndexes.is_empty()):
 		var piece = Piece.new()
 		piece.shape = Constants.SHAPES[newBagIndexes.pop_back()]
 		bag.append(piece)
@@ -67,7 +67,7 @@ func drawGrid():
 	Utilities.delete_children(self)
 	for x in range(gridWidth):
 		for y in range(vanishZone-1,gridHeight):
-			var circle = Sprite.new()
+			var circle = Sprite2D.new()
 			if (y == 2):
 				circle.region_enabled = true
 				circle.region_rect = Rect2(0,6,16,10)
@@ -89,7 +89,7 @@ func addPiece():
 func _physics_process(delta):
 	var sthHappened = false
 	if Input.is_action_just_pressed("ui_exit"):
-		get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
+		get_tree().quit()
 	if Input.is_action_just_pressed("ui_right"):
 		if canPieceMoveRight():
 			movePieceInGrid(1,0)
@@ -149,8 +149,8 @@ func _physics_process(delta):
 			deletePieceFromGrid()
 			
 			#Particle
-			var particle = HoldParticle.instance()
-			particle.setDestination($UI/Hold.rect_position + $UI/Hold.rect_size/2)
+			var particle = HoldParticle.instantiate()
+			particle.setDestination($UI/Hold.position + $UI/Hold.size/2)
 			particle.texture = currentPiece.getTextureForPiece()
 			add_child(particle)
 			particle.emit(Vector2(spriteSize*(currentPiece.positionInGrid.x + currentPiece.getShapeWithoutBorders().size()/2.0) + gridOffsetX ,spriteSize*(currentPiece.positionInGrid.y++ currentPiece.getShapeWithoutBorders()[0].size()/2.0) + gridOffsetY ))
@@ -194,7 +194,7 @@ func afterDrop():
 	currentPiece = Piece.new()
 	checkAndClearFullLines()
 	if (checkGameOver()):
-		get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
+		get_tree().quit()
 	spawnFromBag()
 	hasSwapped = false
 
@@ -223,7 +223,7 @@ func drawDroppingPoint():
 		for x in currentPiece.shape.size():
 			for y in currentPiece.shape[0].size():
 				if (currentPiece.shape[x][y] != 0) && (grid[currentPiece.positionInGrid.x + x][droppingY + y] == 0):
-					var circle = Sprite.new()
+					var circle = Sprite2D.new()
 					circle.position = Vector2(currentPiece.positionInGrid.x*spriteSize + x*spriteSize + gridOffsetX,droppingY*spriteSize+y*spriteSize + gridOffsetY)
 					circle.texture = currentPiece.getTextureForPiece()
 					circle.material = darkMaterial
@@ -236,20 +236,20 @@ func hardDropPiece():
 		score += 2
 		$UI/Score/ScoreNumber.text = str(score)
 		movePieceInGrid(0,1)
-	var particle = DropParticle.instance()
+	var particle = DropParticle.instantiate()
 	particle.position.x = gridOffsetX + ((currentPiece.positionInGrid.x + currentPiece.shape.size()/float(2)))* spriteSize
 	var pixelPosy = (currentPiece.positionInGrid.y+1)* spriteSize
 	particle.position.y = (pixelPosy)/2 + gridOffsetY
 	particle.setBoxRanges(Vector2(currentPiece.shape.size()/float(2)* spriteSize, pixelPosy/2 -spriteSize))
 	particle.amount = pixelPosy/20
 	match currentPiece.getColorIndex():
-		1: particle.setColor(Color.red)
-		2: particle.setColor(Color.blue)
-		3: particle.setColor(Color.yellow)
-		4: particle.setColor(Color.cyan)
-		5: particle.setColor(Color.green)
-		6: particle.setColor(Color.fuchsia)
-		7: particle.setColor(Color.orange)
+		1: particle.setColor(Color.RED)
+		2: particle.setColor(Color.BLUE)
+		3: particle.setColor(Color.YELLOW)
+		4: particle.setColor(Color.CYAN)
+		5: particle.setColor(Color.GREEN)
+		6: particle.setColor(Color.FUCHSIA)
+		7: particle.setColor(Color.ORANGE)
 	add_child(particle)
 	particle.emit()
 
@@ -279,7 +279,7 @@ func checkAndClearFullLines():
 						grid[i][j] = grid[i][j-1]
 						grid[i][j-1] = 0
 			#Draw clear particle
-			var particle = ClearParticle.instance()
+			var particle = ClearParticle.instantiate()
 			particle.position.x = gridOffsetX + spriteSize*gridWidth/2.0
 			var pixelPosy = (y)* spriteSize
 			particle.position.y = (pixelPosy) + gridOffsetY

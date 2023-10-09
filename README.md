@@ -1,5 +1,6 @@
 # PokeTetris - Modern Tetris in Godot
 
+Updated for Godot 4.
 A Godot clone of modern versions of tetris. With Pokeballs.
 
 ![gameplay](https://github.com/jpcerrone/tetrisGodot/blob/master/spr/ReadmeDemo.gif)

@@ -1,18 +1,16 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://cymj5snvlwu6t"]
 
-[ext_resource path="res://extras/DropParticle.tres" type="Material" id=1]
-[ext_resource path="res://scr/DropParticle.gd" type="Script" id=2]
+[ext_resource type="Material" uid="uid://vvuku6sednrh" path="res://extras/DropParticle.tres" id="1"]
+[ext_resource type="Script" path="res://scr/DropParticle.gd" id="2"]
 
-[node name="Particles2D" type="Particles2D"]
-position = Vector2( 101.38, 101.38 )
+[node name="GPUParticles2D" type="GPUParticles2D"]
+position = Vector2(101.38, 101.38)
 emitting = false
 amount = 70
+process_material = ExtResource("1")
 lifetime = 1.5
 one_shot = true
 preprocess = 0.2
 explosiveness = 0.52
 randomness = 1.0
-local_coords = false
-draw_order = 1
-process_material = ExtResource( 1 )
-script = ExtResource( 2 )
+script = ExtResource("2")
